@@ -1,44 +1,27 @@
 # Bixbite
 
-Copyright (c) 2017, Bixbite.org
+Copyright (c) 2018, Bixbite.pro
 
-Copyright (c) 2014-2017, The Monero Project
-
-Portions Copyright (c) 2012-2013, The Cryptonote developers
+Copyright (c) 2017-2018, The Bixbite-Project
 
 ## Development Resources
 
-- Web: [www.Bixbite.org](https://www.Bixbite.org)
-- Mail: [contact@Bixbite.org](mailto:contact@Bixbite.org)
+- Web: [www.Bixbite.pro](https://www.Bixbite.pro)
+- Mail: [info@Bixbite.pro](mailto:info@Bixbite.pro)
 
-Please note that code is developed on the [dev branch](https://github.com/bixbiteprojects/Bixbite/tree/dev), if you want to check out the latest updates, before they are merged on main branch, please refer there. Master branch will always point to a version that we consider stable, so you can download the code by simply typing `git clone https://github.com/bixbiteprojects/Bixbite.git`
+The main and stable development branch is always master, so you can download the code by simply typing `git clone https://github.com/BixBite-project/bixbite.git`
 
 ## Introduction
 
-Bixbite (スモコイン in Japanese) is a fork from Monero, one of the most respectable cryptocurrency well-known for **security, privacy, untraceability** and **active development**. Starting as an educational project, we found that it would be great to create a new coin with high level of privacy by (1) moving forward right away to **Ring Confidential Transactions (RingCT)**, (2) setting **minimum transaction _mixin_ to 12** that would greatly reduce chance of being attacked, traced or identified by (blockchain) statistical analysis.
+Bixbite is a fork from Sumokoin, a coin that has earned its popularity by being resistant to ASICS and secure transactions.
+BixBite inherited all the best from Sumocoin and intends to organize a faster payment structure and create a currency in the cryptoworld, which will become the benchmark for the reward for the work done!
 
-Bixbite, therefore, is a new Monero without its legacy, a _truely fungible_ cryptocurrency among just a few ones in the market.
 
 ## Coin Supply & Emission
 
-- **Total supply**: **88,888,888** coins in first 20 years, then **263,000** coins each year for inflation. 
-About 10% (~8.8 million) was premined to reserve for future development, i.e. **80 million coins available** for community mining.
+- **Total supply**: **688 009 000** Bixbite. About ~5% was premined to reserve for future development 
 - **Coin symbol**: **bixbite**
-- **Coin Units**:
-  + 1 bixbiteshi &nbsp;= 0.000000001 **bixbite** (10<sup>-9</sup> - _the smallest coin unit_)
-  + 1 bixbitekun = 0.000001 **bixbite** (10<sup>-6</sup>)
-  + 1 bixbitesan = 0.001 **bixbite** (10<sup>-3</sup>)
-- **Hash algorithm**: CryptoNight (Proof-Of-Work)
-- **Emission scheme**: Bixbite's block reward changes _every 6-months_ as the following "Camel" distribution* (inspired by _real-world mining production_ like of crude oil, coal etc. that is often slow at first, 
-accelerated in the next few years before declined and depleted). However, the emission path of Bixbite is generally not far apart from what of Bitcoin (view charts below).
-
-![](http://www.Bixbite.org/images/block_reward_by_calendar_year.png)
-
-![](http://www.Bixbite.org/images/block_reward_by_calendar_month.png)
-
-![](http://www.Bixbite.org/images/emission_speed_bixbite_vs_btc.png)
-
-\* The emulated algorithm of Bixbite block-reward emission can be found in Python and C++ scripts at [scripts](scripts) directory.
+- **Hash algorithm**: CryptoNight Heavy (Proof-Of-Work)
 
 ## About this Project
 
@@ -55,38 +38,6 @@ Please view [LICENSE](LICENSE)
 [![License](https://img.shields.io/badge/license-BSD3-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Compiling Bixbite from Source
-
-### Dependencies
-
-The following table summarizes the tools and libraries required to build.  A
-few of the libraries are also included in this repository (marked as
-"Vendored"). By default, the build uses the library installed on the system,
-and ignores the vendored sources. However, if no library is found installed on
-the system, then the vendored source will be built and used. The vendored
-sources are also used for statically-linked builds because distribution
-packages often include only shared library binaries (`.so`) but not static
-library archives (`.a`).
-
-| Dep            | Min. Version  | Vendored | Debian/Ubuntu Pkg  | Arch Pkg       | Optional | Purpose        |
-| -------------- | ------------- | ---------| ------------------ | -------------- | -------- | -------------- |
-| GCC            | 4.7.3         | NO       | `build-essential`  | `base-devel`   | NO       |                |
-| CMake          | 3.0.0         | NO       | `cmake`            | `cmake`        | NO       |                |
-| pkg-config     | any           | NO       | `pkg-config`       | `base-devel`   | NO       |                |
-| Boost          | 1.58          | NO       | `libboost-all-dev` | `boost`        | NO       |                |
-| OpenSSL      	 | basically any | NO       | `libssl-dev`       | `openssl`      | NO       | sha256 sum     |
-| BerkeleyDB     | 4.8           | NO       | `libdb{,++}-dev`   | `db`           | NO       |                |
-| libevent       | 2.0           | NO       | `libevent-dev`     | `libevent`     | NO       |                |
-| libunbound     | 1.4.16        | YES      | `libunbound-dev`   | `unbound`      | NO       |                |
-| libminiupnpc   | 2.0           | YES      | `libminiupnpc-dev` | `miniupnpc`    | YES      | NAT punching   |
-| libunwind      | any           | NO       | `libunwind8-dev`   | `libunwind`    | YES      | stack traces   |
-| ldns           | 1.6.17        | NO       | `libldns-dev`      | `ldns`         | YES      | ?              |
-| expat          | 1.1           | NO       | `libexpat1-dev`    | `expat`        | YES      | ?              |
-| GTest          | 1.5           | YES      | `libgtest-dev`^    | `gtest`        | YES      | test suite     |
-| Doxygen        | any           | NO       | `doxygen`          | `doxygen`      | YES      | documentation  |
-| Graphviz       | any           | NO       | `graphviz`         | `graphviz`     | YES      | documentation  |
-
-[^] On Debian/Ubuntu `libgtest-dev` only includes sources and headers. You must
-build the library binary manually. This can be done with the following command ```sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake . && sudo make && sudo mv libg* /usr/lib/ ```
 
 ### Build instructions
 
