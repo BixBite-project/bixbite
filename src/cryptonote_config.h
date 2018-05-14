@@ -72,11 +72,6 @@
 #define ORPHANED_BLOCKS_MAX_COUNT                       100
 
 #define DIFFICULTY_TARGET                               100  // seconds
-//#define DIFFICULTY_WINDOW                               200  // blocks
-//#define DIFFICULTY_LAG                                  15   // !!!
-//#define DIFFICULTY_CUT                                  10   // timestamps to cut after sorting
-//#define DIFFICULTY_BLOCKS_COUNT                         DIFFICULTY_WINDOW + DIFFICULTY_LAG
-
 #define DIFFICULTY_WINDOW_V2							17
 #define DIFFICULTY_CUT_V2                               6
 #define DIFFICULTY_BLOCKS_COUNT_V2                      DIFFICULTY_WINDOW_V2 + DIFFICULTY_CUT_V2*2
@@ -88,7 +83,7 @@
 
 
 #define BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT          10000  //by default, blocks ids count in synchronizing
-#define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT              50    //by default, blocks count in blocks downloading
+#define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT              100    //by default, blocks count in blocks downloading
 #define CRYPTONOTE_PROTOCOL_HOP_RELAX_COUNT             3      //value of hop, after which we use only announce of new block
 
 #define CRYPTONOTE_MEMPOOL_TX_LIVETIME                  86400 //seconds, one day
@@ -168,7 +163,7 @@ namespace config
     uint16_t const P2P_DEFAULT_PORT = 44050;
     uint16_t const RPC_DEFAULT_PORT = 44051;
     boost::uuids::uuid const NETWORK_ID = { {
-        0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x17, 0x09, 0x73, 0xB3, 0x23, 0x11
+        0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x22, 0x09, 0x73, 0xB3, 0x23, 0x11
       } }; // Bender's daydream
     std::string const GENESIS_TX ="021401ff000180eb8edea30a02cb4ecfd57729698c1ef4593b72d0e69aaa4bb33af93c419d50620d6b62b35d45210168f648e40914f26388a9e14d2536d28bfc4850c0c6c920b9d62c7a082bff360800";
     uint32_t const GENESIS_NONCE = 10001;

@@ -40,6 +40,7 @@
  */
 
 #pragma once
+#include <ios>
 #include <vector>
 #include <list>
 #include <string>
@@ -297,7 +298,7 @@ namespace serialization {
      * \brief self explanatory
      */
     template<class Stream>
-    bool do_check_stream_state(Stream& s, boost::mpl::bool_<true>)
+    bool do_check_stream_state(Stream& s,const boost::mpl::bool_<true>& /*is_saving*/)
     {
       return s.good();
     }
@@ -308,7 +309,7 @@ namespace serialization {
      * \detailed Also checks to make sure that the stream is not at EOF
      */
     template<class Stream>
-    bool do_check_stream_state(Stream& s, boost::mpl::bool_<false>)
+    bool do_check_stream_state(Stream& s,const boost::mpl::bool_<false>& /*is_saving*/)
     {
       bool result = false;
       if (s.good())
