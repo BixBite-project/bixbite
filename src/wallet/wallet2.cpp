@@ -727,7 +727,7 @@ static uint64_t decodeRct(const rct::rctSig & rv, const crypto::key_derivation &
   }
   catch (const std::exception &e)
   {
-    LOG_ERROR("Failed to decode input " << i);
+    //LOG_ERROR("Failed to decode input " << i);
     return 0;
   }
 }
