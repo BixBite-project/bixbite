@@ -82,7 +82,7 @@ static const struct {
   uint8_t threshold;
   time_t time;
 } mainnet_hard_forks[] = {
-  { 3, 1, 0, 1522800000 }
+  { 3, 1, 0, 1522540800 }
 };
 static const uint64_t mainnet_hard_fork_version_1_till = (uint64_t)-1;
 
@@ -680,7 +680,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   auto height = m_db->height();
   // Diff for start testnet network hashrate
  /* if (m_testnet && (uint64_t)height >= 1 && (uint64_t)height <= 1 + (uint64_t)DIFFICULTY_BLOCKS_COUNT_V2){
-    return (difficulty_type) 10000000;
+    return (difficulty_type) 3000;
   }*/
   // Reset network hashrate to 2.0 MHz when hardfork v3 comes
  /* if (!m_testnet && (uint64_t)height >= MAINNET_HARDFORK_V3_HEIGHT && (uint64_t)height <= MAINNET_HARDFORK_V3_HEIGHT + (uint64_t)DIFFICULTY_BLOCKS_COUNT_V2){
@@ -1053,7 +1053,13 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   b.major_version = m_hardfork->get_current_version();
   b.minor_version = m_hardfork->get_ideal_version();
   b.prev_id = get_tail_id();
+
+
   b.timestamp = time(NULL);
+
+  LOG_PRINT_L0("New block be found at: " << ctime(( time_t *)&b.timestamp));
+
+
 
   diffic = get_difficulty_for_next_block();
   CHECK_AND_ASSERT_MES(diffic, false, "difficulty overhead.");

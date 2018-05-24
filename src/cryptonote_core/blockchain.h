@@ -293,6 +293,8 @@ namespace cryptonote
      */
     difficulty_type get_difficulty_for_next_block();
 
+    uint64_t get_timestamp1(const uint64_t& height){return m_db->get_block_timestamp1(height);}
+
     /**
      * @brief adds a block to the blockchain
      *

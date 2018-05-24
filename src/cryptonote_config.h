@@ -135,6 +135,10 @@
 #define TRANSACTION_SIZE_LIMIT                          ((uint64_t) ((CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 110 / 100) - CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE))
 #define BLOCK_SIZE_GROWTH_FAVORED_ZONE                  ((uint64_t) (CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 4))
 
+#define LAST_VALIDATE_BLOCK_COUNT                       2
+#define TIME_DEVIATION                                  5
+
+
 // New constants are intended to go here
 namespace config
 {

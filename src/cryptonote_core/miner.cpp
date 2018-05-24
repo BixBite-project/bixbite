@@ -354,7 +354,6 @@ namespace cryptonote
     uint32_t local_template_ver = 0;
     block b;
 	cn_pow_hash_v2 hash_ctx;
-
     while(!m_stop)
     {
       if(m_pausers_count)//anti split workaround
@@ -371,6 +370,7 @@ namespace cryptonote
         CRITICAL_REGION_END();
         local_template_ver = m_template_no;
         nonce = m_starter_nonce + th_local_index;
+
       }
 
       if(!local_template_ver)//no any set_block_template call
@@ -398,6 +398,7 @@ namespace cryptonote
           if (!m_config_folder_path.empty())
             epee::serialization::store_t_to_json_file(m_config, m_config_folder_path + "/" + MINER_CONFIG_FILE_NAME);
         }
+
       }
       nonce+=m_threads_total;
       ++m_hashes;

@@ -810,6 +810,7 @@ public:
    */
   virtual uint64_t get_block_timestamp(const uint64_t& height) const = 0;
 
+  virtual uint64_t get_block_timestamp1(const uint64_t& height) const = 0;
   /**
    * @brief fetch the top block's timestamp
    *
