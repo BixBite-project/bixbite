@@ -176,9 +176,9 @@ namespace cryptonote
   }
   bool checkpoints::init_testnet_default_checkpoints()
   {
-    ADD_CHECKPOINT(1,     "39faefeba90914037057bf70877c2b27a0b70968f4e77d7494441d4689182ac8");
+    /* ADD_CHECKPOINT(1,     "39faefeba90914037057bf70877c2b27a0b70968f4e77d7494441d4689182ac8");
     ADD_CHECKPOINT(10,    "ae49b879c8e92dcbf519b762d5e8408a3b8a7d8df3cd62ead4715b39691dbe7d");
-    /*ADD_CHECKPOINT(100,   "f3bd44c626cc12d449183ca84b58615d792523ba229385ff6717ab29a3e88926");
+   ADD_CHECKPOINT(100,   "f3bd44c626cc12d449183ca84b58615d792523ba229385ff6717ab29a3e88926");
     ADD_CHECKPOINT(1000,  "d284c992cb570f86c2e0bcfaa552b1d73bd40417e1c2a40f82bc6432217f0873");
     ADD_CHECKPOINT(3000,  "81e040955b710dc5a5056668c4eaf3fbc4da2f72c0a63763250ede32a92e0f06");
     ADD_CHECKPOINT(5000,  "e838c077bc66356d9bb321d4eb60f0851ef766f0619ddc4c6568a0f149aacea0");
@@ -229,17 +229,7 @@ namespace cryptonote
     // All bixbitePulse domains have DNSSEC on and valid
     static const std::vector<std::string> dns_urls = 
     {
-	"checkpoints.bixbitepulse.stream"
-	, "checkpoints.bixbitepulse.download"
-	, "checkpoints.bixbitepulse.win"
-	, "checkpoints.bixbitepulse.bid"
-    };
-
-    static const std::vector<std::string> testnet_dns_urls = { 
-	"testpoints.bixbitepulse.stream"
-	, "testpoints.bixbitepulse.download"
-	, "testpoints.bixbitepulse.win"
-	, "testpoints.bixbitepulse.bid"
+    "checkpoints.bixbite.pro"
     };
 
     std::vector<std::vector<std::string> > records;
@@ -255,11 +245,7 @@ namespace cryptonote
     do
     {
       std::string url;
-      if (testnet)
-      {
-        url = testnet_dns_urls[cur_index];
-      }
-      else
+      if (!testnet)
       {
         url = dns_urls[cur_index];
       }

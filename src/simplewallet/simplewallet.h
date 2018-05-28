@@ -48,7 +48,7 @@
 //#include "wallet/password_container.h"
 #include "common/password.h"
 #include "crypto/crypto.h"  // for definition of crypto::secret_key
-
+#include "common/i18n.h"
 /*!
  * \namespace cryptonote
  * \brief Holds cryptonote related classes and helpers.

@@ -1224,7 +1224,7 @@ namespace cryptonote
     bl = boost::value_initialized<block>();
     account_public_address addr = boost::value_initialized<account_public_address>();
     construct_miner_tx(0, 0, 0, 0, 0, addr, bl.miner_tx); // zero fee in genesis
-    std::string genesis_coinbase_tx_hex = genesis_tx;// config::GENESIS_TX;
+    std::string genesis_coinbase_tx_hex = genesis_tx;
     blobdata tx_bl;
     string_tools::parse_hexstr_to_binbuff(genesis_coinbase_tx_hex, tx_bl);
     bool r = parse_and_validate_tx_from_blob(tx_bl, bl.miner_tx);

@@ -54,7 +54,7 @@
 
 // MONEY_SUPPLY - total number coins to be generated               
 #define MONEY_SUPPLY                                    ((uint64_t)6880090000000)
-#define EMISSION_SPEED_FACTOR                           19
+#define EMISSION_SPEED_FACTOR                           20
 #define FINAL_SUBSIDY                                   ((uint64_t)4190000) // 4 * pow(10, 9)
 #define GENESIS_BLOCK_REWARD                            ((uint64_t)353190000000) // ~5% dev premine
 
@@ -114,7 +114,7 @@
 
 #define ALLOW_DEBUG_COMMANDS
 
-#define CRYPTONOTE_NAME                                 "Bixbite"
+#define CRYPTONOTE_NAME                                 "bixbite"
 #define CRYPTONOTE_POOLDATA_FILENAME                    "poolstate.bin"
 #define CRYPTONOTE_BLOCKCHAINDATA_FILENAME              "blockchain.bin"
 #define CRYPTONOTE_BLOCKCHAINDATA_TEMP_FILENAME         "blockchain.bin.tmp"
@@ -124,10 +124,11 @@
 #define THREAD_STACK_SIZE                               5 * 1024 * 1024
 
 // coin emission change interval/speed configs
-#define COIN_EMISSION_MONTH_INTERVAL                    6  // months to change emission speed
-#define COIN_EMISSION_HEIGHT_INTERVAL                   ((uint64_t) (COIN_EMISSION_MONTH_INTERVAL * (30.4375 * 24 * 3600) / DIFFICULTY_TARGET)) // calculated to # of heights to change emission speed
-#define PEAK_COIN_EMISSION_YEAR                         4
-#define PEAK_COIN_EMISSION_HEIGHT                       ((uint64_t) (((12 * 30.4375 * 24 * 3600)/DIFFICULTY_TARGET) * PEAK_COIN_EMISSION_YEAR)) // = (# of heights emmitted per year) * PEAK_COIN_EMISSION_YEAR
+//#define COIN_EMISSION_INTERVAL                          ((uint64_t) (12*(30.4375 * 24 * 3600) / DIFFICULTY_TARGET))
+//#define COIN_EMISSION_MONTH_INTERVAL                    6  // months to change emission speed
+//#define COIN_EMISSION_HEIGHT_INTERVAL                   ((uint64_t) (COIN_EMISSION_MONTH_INTERVAL * (30.4375 * 24 * 3600) / DIFFICULTY_TARGET)) // calculated to # of heights to change emission speed 157788
+//#define PEAK_COIN_EMISSION_YEAR                         4
+//#define PEAK_COIN_EMISSION_HEIGHT                       ((uint64_t) (((12 * 30.4375 * 24 * 3600)/DIFFICULTY_TARGET) * PEAK_COIN_EMISSION_YEAR)) // = (# of heights emmitted per year) * PEAK_COIN_EMISSION_YEAR 1262304
 
 #define DEFAULT_MIXIN                                   1    // default & minimum mixin allowed
 #define MAX_MIXIN                                       240    
