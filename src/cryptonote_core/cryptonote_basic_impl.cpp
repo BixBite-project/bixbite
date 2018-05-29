@@ -255,6 +255,7 @@ bool get_account_address_from_str(
         , std::string const & str
         )
 {
+     LOG_PRINT_L1("is tesnet? "<<testnet);
     uint64_t address_prefix = testnet ?
                 config::testnet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX;
     uint64_t integrated_address_prefix = testnet ?

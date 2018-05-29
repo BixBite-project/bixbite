@@ -168,7 +168,7 @@ namespace config
     uint16_t const P2P_DEFAULT_PORT = 44050;
     uint16_t const RPC_DEFAULT_PORT = 44051;
     boost::uuids::uuid const NETWORK_ID = { {
-        0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x22, 0x09, 0x73, 0xB3, 0x23, 0x11
+        0x37 ,0x15, 0x44, 0x87 , 0x90, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x22, 0x09, 0x73, 0xB3, 0x23, 0x11
       } }; // Bender's daydream
     std::string const GENESIS_TX ="021401ff000180eb8edea30a02cb4ecfd57729698c1ef4593b72d0e69aaa4bb33af93c419d50620d6b62b35d45210168f648e40914f26388a9e14d2536d28bfc4850c0c6c920b9d62c7a082bff360800";
     uint32_t const GENESIS_NONCE = 10001;
