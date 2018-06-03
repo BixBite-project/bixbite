@@ -394,12 +394,11 @@ namespace nodetool
     if (testnet)
     {
       memcpy(&m_network_id, &::config::testnet::NETWORK_ID, 16); 
-      full_addrs.insert("107.181.174.45:44050");
-      full_addrs.insert("89.163.214.63:44050");
-      full_addrs.insert("91.226.83.104:44050");
-      full_addrs.insert("54.39.96.162:44050");
-      full_addrs.insert("139.99.42.231:44050");
-	  
+      full_addrs.insert("seed0.bxbnetwork.biz:44050");
+      full_addrs.insert("seed1.bxbnetwork.biz:44050");
+      full_addrs.insert("seed2.bxbnetwork.biz:44050");
+      full_addrs.insert("seed3.bxbnetwork.biz:44050");
+      full_addrs.insert("seed4.bxbnetwork.biz:44050");
      
     }
     else
@@ -476,12 +475,11 @@ namespace nodetool
       if (!full_addrs.size())
       {
         LOG_PRINT_L0("DNS seed node lookup either timed out or failed, falling back to defaults");
-        full_addrs.insert("107.181.174.45:44040");
-        full_addrs.insert("89.163.214.63:44040");
-        full_addrs.insert("91.226.83.104:44040");
-        full_addrs.insert("54.39.96.162:44040");
-        full_addrs.insert("139.99.42.231:44040");
-
+        full_addrs.insert("seed0.bxbnetwork.biz:44040");
+        full_addrs.insert("seed1.bxbnetwork.biz:44040");
+        full_addrs.insert("seed2.bxbnetwork.biz:44040");
+        full_addrs.insert("seed3.bxbnetwork.biz:44040");
+        full_addrs.insert("seed4.bxbnetwork.biz:44040");
 
       }
     }
