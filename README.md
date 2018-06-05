@@ -20,7 +20,7 @@ BixBite inherited all the best from Sumocoin and intends to organize a faster pa
 ## Coin Supply & Emission
 
 - **Total supply**: **688 009 000** Bixbite. About ~5% was premined to reserve for future development 
-- **Coin symbol**: **bixbite**
+- **Coin symbol**: **BXB**
 - **Hash algorithm**: CryptoNight Heavy (Proof-Of-Work)
 
 ## About this Project
