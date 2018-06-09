@@ -180,6 +180,8 @@ public:
 
   virtual uint64_t get_block_timestamp(const uint64_t& height) const;
 
+  virtual uint64_t get_block_timestamp1(const uint64_t& height) const;
+
   virtual uint64_t get_top_block_timestamp() const;
 
   virtual size_t get_block_size(const uint64_t& height) const;

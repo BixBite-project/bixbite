@@ -54,7 +54,7 @@
 
 // MONEY_SUPPLY - total number coins to be generated               
 #define MONEY_SUPPLY                                    ((uint64_t)6880090000000)
-#define EMISSION_SPEED_FACTOR                           19
+#define EMISSION_SPEED_FACTOR                           20
 #define FINAL_SUBSIDY                                   ((uint64_t)4190000) // 4 * pow(10, 9)
 #define GENESIS_BLOCK_REWARD                            ((uint64_t)353190000000) // ~5% dev premine
 
@@ -114,7 +114,7 @@
 
 #define ALLOW_DEBUG_COMMANDS
 
-#define CRYPTONOTE_NAME                                 "Bixbite"
+#define CRYPTONOTE_NAME                                 "bixbite"
 #define CRYPTONOTE_POOLDATA_FILENAME                    "poolstate.bin"
 #define CRYPTONOTE_BLOCKCHAINDATA_FILENAME              "blockchain.bin"
 #define CRYPTONOTE_BLOCKCHAINDATA_TEMP_FILENAME         "blockchain.bin.tmp"
@@ -124,16 +124,21 @@
 #define THREAD_STACK_SIZE                               5 * 1024 * 1024
 
 // coin emission change interval/speed configs
-#define COIN_EMISSION_MONTH_INTERVAL                    6  // months to change emission speed
-#define COIN_EMISSION_HEIGHT_INTERVAL                   ((uint64_t) (COIN_EMISSION_MONTH_INTERVAL * (30.4375 * 24 * 3600) / DIFFICULTY_TARGET)) // calculated to # of heights to change emission speed
-#define PEAK_COIN_EMISSION_YEAR                         4
-#define PEAK_COIN_EMISSION_HEIGHT                       ((uint64_t) (((12 * 30.4375 * 24 * 3600)/DIFFICULTY_TARGET) * PEAK_COIN_EMISSION_YEAR)) // = (# of heights emmitted per year) * PEAK_COIN_EMISSION_YEAR
+//#define COIN_EMISSION_INTERVAL                          ((uint64_t) (12*(30.4375 * 24 * 3600) / DIFFICULTY_TARGET))
+//#define COIN_EMISSION_MONTH_INTERVAL                    6  // months to change emission speed
+//#define COIN_EMISSION_HEIGHT_INTERVAL                   ((uint64_t) (COIN_EMISSION_MONTH_INTERVAL * (30.4375 * 24 * 3600) / DIFFICULTY_TARGET)) // calculated to # of heights to change emission speed 157788
+//#define PEAK_COIN_EMISSION_YEAR                         4
+//#define PEAK_COIN_EMISSION_HEIGHT                       ((uint64_t) (((12 * 30.4375 * 24 * 3600)/DIFFICULTY_TARGET) * PEAK_COIN_EMISSION_YEAR)) // = (# of heights emmitted per year) * PEAK_COIN_EMISSION_YEAR 1262304
 
 #define DEFAULT_MIXIN                                   1    // default & minimum mixin allowed
 #define MAX_MIXIN                                       240    
 
 #define TRANSACTION_SIZE_LIMIT                          ((uint64_t) ((CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 110 / 100) - CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE))
 #define BLOCK_SIZE_GROWTH_FAVORED_ZONE                  ((uint64_t) (CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE * 4))
+
+#define LAST_VALIDATE_BLOCK_COUNT                       2
+#define TIME_DEVIATION                                  5
+
 
 // New constants are intended to go here
 namespace config
@@ -163,7 +168,7 @@ namespace config
     uint16_t const P2P_DEFAULT_PORT = 44050;
     uint16_t const RPC_DEFAULT_PORT = 44051;
     boost::uuids::uuid const NETWORK_ID = { {
-        0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x22, 0x09, 0x73, 0xB3, 0x23, 0x11
+        0x37 ,0x15, 0x44, 0x87 , 0x90, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x22, 0x09, 0x73, 0xB3, 0x23, 0x11
       } }; // Bender's daydream
     std::string const GENESIS_TX ="021401ff000180eb8edea30a02cb4ecfd57729698c1ef4593b72d0e69aaa4bb33af93c419d50620d6b62b35d45210168f648e40914f26388a9e14d2536d28bfc4850c0c6c920b9d62c7a082bff360800";
     uint32_t const GENESIS_NONCE = 10001;

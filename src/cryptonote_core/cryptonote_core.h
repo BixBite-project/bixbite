@@ -52,6 +52,37 @@ DISABLE_VS_WARNINGS(4355)
 
 namespace cryptonote
 {
+    typedef struct
+    {
+
+      uint8_t li_vn_mode;      // Eight bits. li, vn, and mode.
+                               // li.   Two bits.   Leap indicator.
+                               // vn.   Three bits. Version number of the protocol.
+                               // mode. Three bits. Client will pick mode 3 for client.
+
+      uint8_t stratum;         // Eight bits. Stratum level of the local clock.
+      uint8_t poll;            // Eight bits. Maximum interval between successive messages.
+      uint8_t precision;       // Eight bits. Precision of the local clock.
+
+      uint32_t rootDelay;      // 32 bits. Total round trip delay time.
+      uint32_t rootDispersion; // 32 bits. Max error aloud from primary clock source.
+      uint32_t refId;          // 32 bits. Reference clock identifier.
+
+      uint32_t refTm_s;        // 32 bits. Reference time-stamp seconds.
+      uint32_t refTm_f;        // 32 bits. Reference time-stamp fraction of a second.
+
+      uint32_t origTm_s;       // 32 bits. Originate time-stamp seconds.
+      uint32_t origTm_f;       // 32 bits. Originate time-stamp fraction of a second.
+
+      uint32_t rxTm_s;         // 32 bits. Received time-stamp seconds.
+      uint32_t rxTm_f;         // 32 bits. Received time-stamp fraction of a second.
+
+      uint32_t txTm_s;         // 32 bits and the most important field the client cares about. Transmit time-stamp seconds.
+      uint32_t txTm_f;         // 32 bits. Transmit time-stamp fraction of a second.
+
+    } ntp_packet;              // Total: 384 bits or 48 bytes
+
+
    struct test_options {
      const std::pair<uint8_t, uint64_t> *hard_forks;
    };
@@ -141,14 +172,17 @@ namespace cryptonote
       * @note see Blockchain::cleanup_handle_incoming_blocks
       */
      bool cleanup_handle_incoming_blocks(bool force_sync = false);
-     	     	
+
+     time_t request_datetime();
+     time_t get_timestamp_top_block();
+
      /**
       * @brief check the size of a block against the current maximum
       *
       * @param block_blob the block to check
       *
       * @return whether or not the block is too big
-      */
+      */    
      bool check_incoming_block_size(const blobdata& block_blob) const;
 
      /**

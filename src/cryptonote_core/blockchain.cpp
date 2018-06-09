@@ -82,7 +82,7 @@ static const struct {
   uint8_t threshold;
   time_t time;
 } mainnet_hard_forks[] = {
-  { 3, 1, 0, 1522800000 }
+  { 3, 1, 0, 1522540800 }
 };
 static const uint64_t mainnet_hard_fork_version_1_till = (uint64_t)-1;
 
@@ -679,9 +679,11 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   std::vector<difficulty_type> difficulties;
   auto height = m_db->height();
   // Diff for start testnet network hashrate
- /* if (m_testnet && (uint64_t)height >= 1 && (uint64_t)height <= 1 + (uint64_t)DIFFICULTY_BLOCKS_COUNT_V2){
-    return (difficulty_type) 10000000;
-  }*/
+
+  //if (m_testnet && (uint64_t)height >= 1 && (uint64_t)height <= 1 + (uint64_t)DIFFICULTY_BLOCKS_COUNT_V2){
+ // if (m_testnet  && (uint64_t)height >= 1){
+ //   return (difficulty_type) 3;
+ // }
   // Reset network hashrate to 2.0 MHz when hardfork v3 comes
  /* if (!m_testnet && (uint64_t)height >= MAINNET_HARDFORK_V3_HEIGHT && (uint64_t)height <= MAINNET_HARDFORK_V3_HEIGHT + (uint64_t)DIFFICULTY_BLOCKS_COUNT_V2){
     return (difficulty_type) 480000000;
@@ -1053,6 +1055,8 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   b.major_version = m_hardfork->get_current_version();
   b.minor_version = m_hardfork->get_ideal_version();
   b.prev_id = get_tail_id();
+
+
   b.timestamp = time(NULL);
 
   diffic = get_difficulty_for_next_block();
@@ -1060,7 +1064,7 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
 
   median_size = m_current_block_cumul_sz_limit / 2;
 
-  cal_height = height - height % COIN_EMISSION_HEIGHT_INTERVAL;
+  cal_height = height;// - height % COIN_EMISSION_HEIGHT_INTERVAL;
   already_generated_coins = cal_height ? m_db->get_block_already_generated_coins(cal_height - 1) : 0;
   
   CRITICAL_REGION_END();
@@ -2677,7 +2681,7 @@ bool Blockchain::check_fee(size_t blob_size, uint64_t fee) const
   uint64_t fee_per_kb;
   uint64_t median = m_current_block_cumul_sz_limit / 2;
   uint64_t height = m_db->height();
-  uint64_t cal_height = height - height % COIN_EMISSION_HEIGHT_INTERVAL;
+  uint64_t cal_height = height;// - height % COIN_EMISSION_HEIGHT_INTERVAL;
   uint64_t cal_generated_coins = cal_height ? m_db->get_block_already_generated_coins(cal_height - 1) : 0;
   uint64_t base_reward;
   if (!get_block_reward(median, 1, cal_generated_coins, base_reward, height))
@@ -2714,7 +2718,7 @@ uint64_t Blockchain::get_dynamic_per_kb_fee_estimate(uint64_t grace_blocks) cons
 
   //uint64_t already_generated_coins = m_db->height() ? m_db->get_block_already_generated_coins(m_db->height() - 1) : 0;
   uint64_t height = m_db->height();
-  uint64_t cal_height = height - height % COIN_EMISSION_HEIGHT_INTERVAL;
+  uint64_t cal_height = height;// - height % COIN_EMISSION_HEIGHT_INTERVAL;
   uint64_t cal_generated_coins = cal_height ? m_db->get_block_already_generated_coins(cal_height - 1) : 0;
   uint64_t base_reward;
   if (!get_block_reward(median, 1, cal_generated_coins, base_reward, height))
@@ -3171,7 +3175,7 @@ leave:
   TIME_MEASURE_START(vmt);
   uint64_t base_reward = 0;
   uint64_t height = m_db->height();
-  uint64_t cal_height = height - height % COIN_EMISSION_HEIGHT_INTERVAL;
+  uint64_t cal_height = height;// - height % COIN_EMISSION_HEIGHT_INTERVAL;
   uint64_t cal_generated_coins = cal_height ? m_db->get_block_already_generated_coins(cal_height - 1) : 0;
   if (!validate_miner_transaction(bl, cumulative_block_size, fee_summary, base_reward, cal_generated_coins, bvc.m_partial_block_reward, m_hardfork->get_current_version()))
   {

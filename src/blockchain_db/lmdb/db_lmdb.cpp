@@ -243,6 +243,7 @@ typedef struct mdb_block_info
 {
   uint64_t bi_height;
   uint64_t bi_timestamp;
+  uint64_t bi_timestamp1;
   uint64_t bi_coins;
   uint64_t bi_size; // a size_t really but we need 32-bit compat
   difficulty_type bi_diff;
@@ -637,6 +638,7 @@ void BlockchainLMDB::add_block(const block& blk, const size_t& block_size, const
   mdb_block_info bi;
   bi.bi_height = m_height;
   bi.bi_timestamp = blk.timestamp;
+  bi.bi_timestamp1=time(NULL);
   bi.bi_coins = coins_generated;
   bi.bi_size = block_size;
   bi.bi_diff = cumulative_difficulty;
@@ -1517,7 +1519,28 @@ uint64_t BlockchainLMDB::get_block_timestamp(const uint64_t& height) const
   TXN_POSTFIX_RDONLY();
   return ret;
 }
+uint64_t BlockchainLMDB::get_block_timestamp1(const uint64_t& height) const
+{
+  LOG_PRINT_L3("BlockchainLMDB::" << __func__);
+  check_open();
 
+  TXN_PREFIX_RDONLY();
+  RCURSOR(block_info);
+
+  MDB_val_set(result, height);
+  auto get_result = mdb_cursor_get(m_cur_block_info, (MDB_val *)&zerokval, &result, MDB_GET_BOTH);
+  if (get_result == MDB_NOTFOUND)
+  {
+    throw0(BLOCK_DNE(std::string("Attempt to get timestamp from height ").append(boost::lexical_cast<std::string>(height)).append(" failed -- timestamp not in db").c_str()));
+  }
+  else if (get_result)
+    throw0(DB_ERROR("Error attempting to retrieve a timestamp from the db"));
+
+  mdb_block_info *bi = (mdb_block_info *)result.mv_data;
+  uint64_t ret = bi->bi_timestamp1;
+  TXN_POSTFIX_RDONLY();
+  return ret;
+}
 uint64_t BlockchainLMDB::get_top_block_timestamp() const
 {
   LOG_PRINT_L3("BlockchainLMDB::" << __func__);

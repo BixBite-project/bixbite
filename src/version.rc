@@ -1,6 +1,6 @@
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,0,0,3
- PRODUCTVERSION 0,0,0,3
+ FILEVERSION 0,0,0,5
+ PRODUCTVERSION 0,0,0,5
  FILEFLAGSMASK 0x003L
  FILEFLAGS 0x0L
  FILEOS 0x4L
@@ -14,12 +14,12 @@ BEGIN
             VALUE "Comments", "Bixbite\0"
             VALUE "CompanyName", "Bixbite\0"
             VALUE "FileDescription", "Bixbite\0"
-            VALUE "FileVersion", "0.0.0.3b\0"
+            VALUE "FileVersion", "0.0.0.5b\0"
             VALUE "InternalName", "Bixbite\0"
             VALUE "LegalCopyright", "Copyright (C) 2018\0"
             VALUE "OriginalFilename", "\0"
             VALUE "ProductName", "Bixbite\0"
-            VALUE "ProductVersion", "0.0.0.3b\0"
+            VALUE "ProductVersion", "0.0.0.5b\0"
         END
     END
     BLOCK "VarFileInfo"

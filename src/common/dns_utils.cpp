@@ -90,7 +90,7 @@ static const char*
 get_builtin_ds(void)
 {
   return
-". IN DS 19036 8 2 49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5\n";
+          ". IN DS 19036 8 2 49AAC11D7B6F6446702E54A1607371607A1A41855200FD2CE1CDDE32F24E8FB5\n";
 }
 
 /************************************************************
@@ -261,13 +261,14 @@ std::vector<std::string> DNSResolver::get_record(const std::string& url, int rec
     dnssec_valid = result->secure && !result->bogus;
     if (result->havedata)
     {
+
       for (size_t i=0; result->data[i] != NULL; i++)
       {
+
         addresses.push_back((*reader)(result->data[i], result->len[i]));
       }
     }
   }
-
   return addresses;
 }
 
