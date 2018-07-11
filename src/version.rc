@@ -14,17 +14,17 @@ BEGIN
             VALUE "Comments", "Bixbite\0"
             VALUE "CompanyName", "Bixbite\0"
             VALUE "FileDescription", "Bixbite\0"
-            VALUE "FileVersion", "0.0.0.5b\0"
+            VALUE "FileVersion", "0.0.0.5e\0"
             VALUE "InternalName", "Bixbite\0"
             VALUE "LegalCopyright", "Copyright (C) 2018\0"
             VALUE "OriginalFilename", "\0"
             VALUE "ProductName", "Bixbite\0"
-            VALUE "ProductVersion", "0.0.0.5b\0"
+            VALUE "ProductVersion", "0.0.0.5e\0"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x419, 1200
+        VALUE "Translation", 0x409, 1200
     END
 END
 IDI_ICON1               ICON    DISCARDABLE     "bxb.ico"

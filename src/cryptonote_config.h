@@ -123,13 +123,6 @@
 
 #define THREAD_STACK_SIZE                               5 * 1024 * 1024
 
-// coin emission change interval/speed configs
-//#define COIN_EMISSION_INTERVAL                          ((uint64_t) (12*(30.4375 * 24 * 3600) / DIFFICULTY_TARGET))
-//#define COIN_EMISSION_MONTH_INTERVAL                    6  // months to change emission speed
-//#define COIN_EMISSION_HEIGHT_INTERVAL                   ((uint64_t) (COIN_EMISSION_MONTH_INTERVAL * (30.4375 * 24 * 3600) / DIFFICULTY_TARGET)) // calculated to # of heights to change emission speed 157788
-//#define PEAK_COIN_EMISSION_YEAR                         4
-//#define PEAK_COIN_EMISSION_HEIGHT                       ((uint64_t) (((12 * 30.4375 * 24 * 3600)/DIFFICULTY_TARGET) * PEAK_COIN_EMISSION_YEAR)) // = (# of heights emmitted per year) * PEAK_COIN_EMISSION_YEAR 1262304
-
 #define DEFAULT_MIXIN                                   1    // default & minimum mixin allowed
 #define MAX_MIXIN                                       240    
 
@@ -154,10 +147,8 @@ namespace config
   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 0x2b;
   uint16_t const P2P_DEFAULT_PORT = 44040;
   uint16_t const RPC_DEFAULT_PORT = 44041;
-  boost::uuids::uuid const NETWORK_ID = { {
-      0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x17, 0x09, 0x73, 0xB3, 0x23, 0x10
-    } }; // Bender's nightmare
-    std::string const GENESIS_TX ="";
+  boost::uuids::uuid const NETWORK_ID = { {0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x17, 0x09, 0x73, 0xB3, 0x23, 0x10} };  //For security reasons this id is fake. Contact the BXB team for a valid ID
+    std::string const GENESIS_TX ="021401ff000180eb8edea30a02c4518830fe5ce54262ff4f6df6be7f1d244dcf5320681b3711f530c07323ab322101864ed1799256dfb1038b2f50fdb0fda8ee368a92c0e52126faa16faa0cd30cda00";
   uint32_t const GENESIS_NONCE = 10000;
 
   namespace testnet

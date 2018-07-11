@@ -159,13 +159,15 @@ namespace cryptonote
 
   bool checkpoints::init_default_checkpoints()
   {
-    ADD_CHECKPOINT(1,     "d3d68753010c173597a73c7177cfd64541f22055f8f3e13d39576f52a2da8bbf");
+   ADD_CHECKPOINT(1,     "d3d68753010c173597a73c7177cfd64541f22055f8f3e13d39576f52a2da8bbf");
     ADD_CHECKPOINT(10,    "8fc767b945930057ce0810f316ffada68320b39875d668154e988372966a350d");
     ADD_CHECKPOINT(50,    "069f8ebd911c1a0d5e0a4f96d556304bf2fb42f642b4d86bc764a6db2cfec28e");
     ADD_CHECKPOINT(100,   "9689170e48b3c92b80e5ec5983abcd58f3b0ba4cf982a24e9c163420f893b0ab");
-    ADD_CHECKPOINT(1000,  "360b96c3d0a5202c548672d550700d982ca15ad5627f70bce0a89dda840b3611");
-
-    /*ADD_CHECKPOINT(3000,  "81e040955b710dc5a5056668c4eaf3fbc4da2f72c0a63763250ede32a92e0f06");
+    ADD_CHECKPOINT(1000,  "156b56b3cb74e9357d36bafac246db97a1a5caf62bdf4dacf210fabe94c02682");
+    ADD_CHECKPOINT(5000,  "e79e4e44300a23482645db7699ef0999ca65228bad4beb3396d1904d14b1176e");
+    ADD_CHECKPOINT(10000,  "e000494587f58c7b46a32586c6e9d607d5ed461618ffc7a9859ec65e35af7284");
+    ADD_CHECKPOINT(30000,  "78283813b9e1eed70fab6c7721aff50303167e5cd600cd9d87c0fd92c4355843");
+   /*  ADD_CHECKPOINT(3000,  "81e040955b710dc5a5056668c4eaf3fbc4da2f72c0a63763250ede32a92e0f06");
     ADD_CHECKPOINT(5000,  "e838c077bc66356d9bb321d4eb60f0851ef766f0619ddc4c6568a0f149aacea0");
     ADD_CHECKPOINT(10000, "360b96c3d0a5202c548672d550700d982ca15ad5627f70bce0a89dda840b3611");
     ADD_CHECKPOINT(20000, "603a45b60dd92ef4524c80d58411d09480b4668c54bc08dd651d838832bd399e");
@@ -287,7 +289,7 @@ namespace cryptonote
 
     if (num_valid_records < 2)
     {
-      LOG_PRINT_L0("WARNING: no two valid bixbitePulse DNS checkpoint records were received "<<num_valid_records);
+      LOG_PRINT_L0("WARNING: no valid bixbitePulse DNS checkpoint records were received "<<num_valid_records);
       return true;
     }
 

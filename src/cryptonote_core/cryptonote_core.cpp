@@ -66,6 +66,7 @@ namespace cryptonote
         m_checkpoints_path(""),
         m_last_dns_checkpoints_update(0),
         m_last_json_checkpoints_update(0)
+       // m_last_blockchain_height(0)
     {
         set_cryptonote_protocol(pprotocol);
     }
@@ -827,7 +828,7 @@ namespace cryptonote
         }*/
         block_verification_context bvc = boost::value_initialized<block_verification_context>();
         m_miner.pause();
-        m_blockchain_storage.add_new_block(b, bvc);
+        m_blockchain_storage.add_new_block(b, bvc,m_target_blockchain_height);
         //anyway - update miner template
         update_miner_block_template();
         m_miner.resume();
@@ -868,7 +869,7 @@ namespace cryptonote
     //-----------------------------------------------------------------------------------------------
     bool core::add_new_block(const block& b, block_verification_context& bvc)
     {
-        return m_blockchain_storage.add_new_block(b, bvc);
+        return m_blockchain_storage.add_new_block(b, bvc,m_target_blockchain_height);
     }
 
     //-----------------------------------------------------------------------------------------------
@@ -885,18 +886,43 @@ namespace cryptonote
         return true;
     }
 
-    time_t core::request_datetime(){
+    /*bool core::request_datetime(){
 
-        time_t timeRecv;
+
+        time_t timeRecv=0;
 
         boost::asio::io_service io_service;
 
         boost::asio::ip::udp::resolver resolver(io_service);
-        boost::asio::ip::udp::resolver::query query(
-                    boost::asio::ip::udp::v4(),
-                    "pool.ntp.org", "123");
+        boost::asio::ip::udp::resolver::query query(boost::asio::ip::udp::v4(),"pool.ntp.org", "123");
+        boost::asio::ip::udp::resolver::query query1(boost::asio::ip::udp::v4(),"0.pool.ntp.org", "123");
+        boost::asio::ip::udp::resolver::query query2(boost::asio::ip::udp::v4(),"1.pool.ntp.org", "123");
+        boost::asio::ip::udp::resolver::query query3(boost::asio::ip::udp::v4(),"2.pool.ntp.org", "123");
 
-        boost::asio::ip::udp::endpoint receiver_endpoint = *resolver.resolve(query);
+
+        boost::asio::ip::udp::endpoint receiver_endpoint;
+        boost::system::error_code ec;
+        receiver_endpoint= *resolver.resolve(query,ec);
+
+        if(ec)
+        {
+            receiver_endpoint= *resolver.resolve(query1,ec);
+            LOG_PRINT_L1("request_datetime pool.ntp.org error " << ec.message());
+        }
+        if(ec)
+        {
+            receiver_endpoint= *resolver.resolve(query2,ec);
+            LOG_PRINT_L1("request_datetime 0.pool.ntp.org error " << ec.message());
+        }
+        if(ec)
+        {
+            receiver_endpoint= *resolver.resolve(query3,ec);
+            LOG_PRINT_L1("request_datetime 1.pool.ntp.org error " << ec.message());
+        }
+        if(ec)
+            LOG_PRINT_L1("request_datetime 2.pool.ntp.org error " << ec.message());
+
+        resolver.cancel();
 
         boost::asio::ip::udp::socket socket(io_service);
         socket.open(boost::asio::ip::udp::v4());
@@ -907,11 +933,13 @@ namespace cryptonote
 
         *( ( char * ) &packet + 0 ) = 0x1b;
 
-        socket.send_to(boost::asio::buffer(&packet,sizeof(ntp_packet)), receiver_endpoint);
-
-        boost::asio::ip::udp::endpoint sender_endpoint;
-
         try{
+            socket.send_to(boost::asio::buffer(&packet,sizeof(ntp_packet)), receiver_endpoint);
+
+            boost::asio::ip::udp::endpoint sender_endpoint;
+
+            socket.wait(boost::asio::ip::tcp::socket::wait_read);
+
             size_t len = socket.receive_from(
                         boost::asio::buffer(&packet,sizeof(ntp_packet)),
                         sender_endpoint
@@ -923,16 +951,27 @@ namespace cryptonote
             packet.txTm_f = ntohl( packet.txTm_f );
 
             timeRecv = ( time_t )( packet.txTm_s - 2208988800ull);
-            LOG_PRINT_L1("Receive time: " << ctime(&timeRecv));
+            LOG_PRINT_L1("Receive time: " << ctime(&timeRecv)<<", "<<timeRecv);
 
         }catch (std::exception& e){
 
             LOG_PRINT_L1("request_datetime failed " << e.what());
 
         }
+        socket.shutdown(boost::asio::ip::udp::socket::shutdown_receive);
+        socket.close();
 
-        return timeRecv;
-    }
+        time_t delta=abs(time(NULL)-timeRecv);
+        if(delta>TIME_DEVIATION)
+        {
+            LOG_PRINT_L0("System time incorrect, please sync your time and restart deamon! delta: "<<delta);
+            return false;
+        }
+
+
+        return true;
+
+    }*/
     time_t core::get_timestamp_top_block(){
 
         crypto::hash prv_block=get_block_id_by_height(get_current_blockchain_height()-1);
@@ -957,25 +996,39 @@ namespace cryptonote
         }
 
         block b = AUTO_VAL_INIT(b);
-        if(!parse_and_validate_block_from_blob(block_blob, b))
+        if(!parse_and_validate_block_from_blob(block_blob, b) || (unsigned)b.timestamp>=time(NULL))
         {
             LOG_PRINT_L1("Failed to parse and validate new block");
             bvc.m_verifivation_failed = true;
             return false;
         }
 
-        uint64_t h=get_current_blockchain_height();
-        if((m_target_blockchain_height-h)<LAST_VALIDATE_BLOCK_COUNT && h!=1)
+      /*  uint64_t h=get_current_blockchain_height();
+        if(m_target_blockchain_height>h)
         {
-            time_t delta=abs(time(NULL)-request_datetime());
-            if(delta>TIME_DEVIATION)
+            if((m_target_blockchain_height-h)<LAST_VALIDATE_BLOCK_COUNT && h!=1)
             {
-                LOG_PRINT_L0("System time incorrect, please sync your time and restart deamon! delta: "<<delta);
-                bvc.m_verifivation_failed = true;
-                return false;
-            }
 
+                if(!request_datetime())
+                {
+                    bvc.m_system_time_incorrect = true;
+                    return false;
+                }
+
+            }
         }
+        else
+        {
+            if(m_last_blockchain_height!=h)
+            {
+                m_last_blockchain_height=h;
+                if(!request_datetime())
+                {
+                    bvc.m_system_time_incorrect = true;
+                    return false;
+                }
+            }
+        }*/
 
         add_new_block(b, bvc);
         if(update_miner_blocktemplate && bvc.m_added_to_main_chain)

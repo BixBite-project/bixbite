@@ -720,7 +720,10 @@ namespace cryptonote
       txkey_pub = rct::rct2pk(rct::scalarmultBase(rct::sk2rct(tx_key)));
     }
     remove_field_from_tx_extra(tx.extra, typeid(tx_extra_pub_key));
-    add_tx_pub_key_to_extra(tx, txkey_pub);
+   /*
+    *  testing "double counting"
+*/
+ add_tx_pub_key_to_extra(tx, txkey_pub);
 
 
     std::vector<crypto::public_key> additional_tx_public_keys;
@@ -1239,17 +1242,17 @@ namespace cryptonote
   //---------------------------------------------------------------
   bool get_block_longhash(const block& b, cn_pow_hash_v2 &ctx, crypto::hash& res)
   {
-    block b_local = b; //workaround to avoid const errors with do_serialize
+   // block b_local = b; //workaround to avoid const errors with do_serialize
     blobdata bd = get_block_hashing_blob(b);
-    if(b_local.major_version < CRYPTONOTE_V2_POW_BLOCK_VERSION)
-    {
-        cn_pow_hash_v1 ctx_v1 = cn_pow_hash_v1::make_borrowed(ctx);
-        ctx_v1.hash(bd.data(), bd.size(), res.data);
-    }
-    else
-    {
+   // if(b_local.major_version < CRYPTONOTE_V2_POW_BLOCK_VERSION)
+    //{
+  //      cn_pow_hash_v1 ctx_v1 = cn_pow_hash_v1::make_borrowed(ctx);
+   //     ctx_v1.hash(bd.data(), bd.size(), res.data);
+  //  }
+   // else
+   // {
         ctx.hash(bd.data(), bd.size(), res.data);
-    }
+   // }
     return true;
   }
   //---------------------------------------------------------------

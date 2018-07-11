@@ -76,6 +76,7 @@ namespace cryptonote
   class Blockchain
   {
   public:
+
     /**
      * @brief Now-defunct (TODO: remove) struct from in-memory blockchain
      */
@@ -308,7 +309,11 @@ namespace cryptonote
      *
      * @return true on successful addition to the blockchain, else false
      */
-    bool add_new_block(const block& bl_, block_verification_context& bvc);
+    bool ready_receive(int sock);
+    time_t request_from_ntp(int sock, std::string ntp_srv);
+    bool check_system_time();
+
+    bool add_new_block(const block& bl_, block_verification_context& bvc,uint64_t target_height=1);
 
     /**
      * @brief clears the blockchain and starts a new one
@@ -851,6 +856,7 @@ namespace cryptonote
 
   private:
 
+    std::vector<std::string> ntp_addrs;
     // TODO: evaluate whether or not each of these typedefs are left over from blockchain_storage
     typedef std::unordered_map<crypto::hash, size_t> blocks_by_id_index;
 

@@ -173,7 +173,7 @@ namespace cryptonote
       */
      bool cleanup_handle_incoming_blocks(bool force_sync = false);
 
-     time_t request_datetime();
+    // bool request_datetime();
      time_t get_timestamp_top_block();
 
      /**
@@ -842,6 +842,7 @@ namespace cryptonote
      friend class tx_validate_inputs;
      std::atomic<bool> m_starter_message_showed; //!< has the "daemon will sync now" message been shown?
 
+     //uint64_t m_last_blockchain_height;
      uint64_t m_target_blockchain_height; //!< blockchain height target
 
      bool m_testnet; //!< are we on testnet?

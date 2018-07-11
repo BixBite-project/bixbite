@@ -2986,6 +2986,7 @@ void wallet2::rescan_blockchain(bool refresh)
 //----------------------------------------------------------------------------------------------------
 bool wallet2::is_transfer_unlocked(const transfer_details& td) const
 {
+
   if(!is_tx_spendtime_unlocked(td.m_tx.unlock_time, td.m_block_height))
     return false;
 

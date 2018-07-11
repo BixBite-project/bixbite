@@ -343,6 +343,11 @@ namespace cryptonote
     m_core.handle_incoming_block(arg.b.block, bvc); // got block from handle_notify_new_block
     m_core.cleanup_handle_incoming_blocks(true);
     m_core.resume_mine();
+    if(bvc.m_system_time_incorrect)
+    {
+      LOG_PRINT_CCONTEXT_L0("Block verification failed, time incorrect");
+      return 1;
+    }
     if(bvc.m_verifivation_failed)
     {
       LOG_PRINT_CCONTEXT_L0("Block verification failed, dropping connection");
@@ -570,6 +575,11 @@ namespace cryptonote
         m_core.cleanup_handle_incoming_blocks(true);
         m_core.resume_mine();
         
+        if(bvc.m_system_time_incorrect)
+        {
+          LOG_PRINT_CCONTEXT_L0("Block verification failed, time incorrect");
+          return 1;
+        }
         if( bvc.m_verifivation_failed )
         {
           LOG_PRINT_CCONTEXT_L0("Block verification failed, dropping connection");
@@ -892,7 +902,12 @@ namespace cryptonote
           block_verification_context bvc = boost::value_initialized<block_verification_context>();
 
           m_core.handle_incoming_block(block_entry.block, bvc, false); // <--- process block
-
+          if(bvc.m_system_time_incorrect)
+          {
+           LOG_PRINT_CCONTEXT_L1("Block verification failed, time incorrect");
+            m_core.cleanup_handle_incoming_blocks();
+            return 1;
+          }
           if(bvc.m_verifivation_failed)
           {
             LOG_PRINT_CCONTEXT_L1("Block verification failed, dropping connection");
