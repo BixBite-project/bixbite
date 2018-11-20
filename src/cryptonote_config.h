@@ -147,6 +147,7 @@ namespace config
   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 0x2b;
   uint16_t const P2P_DEFAULT_PORT = 44040;
   uint16_t const RPC_DEFAULT_PORT = 44041;
+  uint16_t const NODE_RPC_DEFAULT_PORT = 44042;
   boost::uuids::uuid const NETWORK_ID = { {0x37 ,0x15, 0x44, 0x87 , 0x89, 0x23 , 0x11, 0x53, 0x02, 0x34, 0x17, 0x09, 0x73, 0xB3, 0x23, 0x10} };  //For security reasons this id is fake. Contact the BXB team for a valid ID
     std::string const GENESIS_TX ="021401ff000180eb8edea30a02c4518830fe5ce54262ff4f6df6be7f1d244dcf5320681b3711f530c07323ab322101864ed1799256dfb1038b2f50fdb0fda8ee368a92c0e52126faa16faa0cd30cda00";
   uint32_t const GENESIS_NONCE = 10000;

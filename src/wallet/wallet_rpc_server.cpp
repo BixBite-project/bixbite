@@ -50,6 +50,7 @@ namespace
   const command_line::arg_descriptor<std::string, true> arg_rpc_bind_port = {"rpc-bind-port", "Sets bind port for server"};
   const command_line::arg_descriptor<std::string> arg_rpc_bind_ip = {"rpc-bind-ip", "Specify ip to bind rpc server", "127.0.0.1"};
   const command_line::arg_descriptor<std::string> arg_user_agent = {"user-agent", "Restrict RPC to clients using this user agent", ""};
+  const command_line::arg_descriptor<std::string> arg_callback_point = {"callback-point", "Point to send notifications (incomming transacions)", ""};
 
   const command_line::arg_descriptor<bool> arg_confirm_external_bind = {"confirm-external-bind", "Confirm rcp-bind-ip value is NOT a loopback (local) IP"};
 }
@@ -1562,6 +1563,7 @@ int main(int argc, char** argv) {
   tools::wallet2::init_options(desc_params);
   command_line::add_arg(desc_params, arg_rpc_bind_ip);
   command_line::add_arg(desc_params, arg_rpc_bind_port);
+  command_line::add_arg(desc_params, arg_callback_point);
   command_line::add_arg(desc_params, arg_user_agent);
   command_line::add_arg(desc_params, arg_confirm_external_bind);
   command_line::add_arg(desc_params, arg_wallet_file);

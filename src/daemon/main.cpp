@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2016, The Monero Project
+// Copyright (c) 2017-2018, The Bixbite Project
 //
 // All rights reserved.
 //
@@ -40,6 +41,7 @@
 #include "misc_log_ex.h"
 #include "p2p/net_node.h"
 #include "rpc/core_rpc_server.h"
+#include "node_rpc/node_rpc_server.h"
 #include "daemon/command_line_args.h"
 #include "blockchain_db/db_types.h"
 

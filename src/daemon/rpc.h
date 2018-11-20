@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2016, The Monero Project
+// Copyright (c) 2017-2018, The Bixbite Project
 // 
 // All rights reserved.
 // 
@@ -50,7 +51,7 @@ public:
     , t_core & core
     , t_p2p & p2p
     )
-    : m_server{core.get(), p2p.get()}
+      : m_server{core.get(), p2p.get()}
   {
     LOG_PRINT_L0("Initializing core rpc server...");
     if (!m_server.init(vm))
@@ -90,7 +91,7 @@ public:
     } catch (...) {
       LOG_PRINT_L0("Failed to deinitialize rpc server...");
     }
-  }
+  }  
 };
 
 }

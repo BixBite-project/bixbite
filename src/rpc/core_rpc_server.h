@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2016, The Monero Project
+// Copyright (c) 2017-2018, The Bixbite Project
 // 
 // All rights reserved.
 // 
@@ -55,6 +56,7 @@ namespace cryptonote
     static const command_line::arg_descriptor<std::string> arg_rpc_bind_ip;
     static const command_line::arg_descriptor<std::string> arg_rpc_bind_port;
     static const command_line::arg_descriptor<std::string> arg_testnet_rpc_bind_port;
+    static const command_line::arg_descriptor<std::string> arg_callback_point;
     static const command_line::arg_descriptor<bool> arg_restricted_rpc;
     static const command_line::arg_descriptor<std::string> arg_user_agent;
 

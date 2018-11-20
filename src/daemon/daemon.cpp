@@ -38,6 +38,7 @@
 #include "daemon/p2p.h"
 #include "daemon/protocol.h"
 #include "daemon/rpc.h"
+#include "daemon/node_rpc.h"
 #include "daemon/command_server.h"
 #include "version.h"
 #include "../../contrib/epee/include/syncobj.h"
@@ -55,6 +56,7 @@ public:
   t_core core;
   t_p2p p2p;
   t_rpc rpc;
+  t_node_rpc node_rpc;
 
   t_internals(
       boost::program_options::variables_map const & vm
@@ -63,6 +65,7 @@ public:
     , protocol{vm, core}
     , p2p{vm, protocol}
     , rpc{vm, core, p2p}
+    , node_rpc{vm, core, p2p}
   {
     // Handle circular dependencies
     protocol.set_p2p_endpoint(p2p.get());
@@ -75,6 +78,7 @@ void t_daemon::init_options(boost::program_options::options_description & option
   t_core::init_options(option_spec);
   t_p2p::init_options(option_spec);
   t_rpc::init_options(option_spec);
+  t_node_rpc::init_options(option_spec);
 }
 
 t_daemon::t_daemon(
@@ -119,6 +123,7 @@ bool t_daemon::run(bool interactive)
     if (!mp_internals->core.run())
       return false;
     mp_internals->rpc.run();
+    mp_internals->node_rpc.run();
 
     std::unique_ptr<daemonize::t_command_server> rpc_commands;
 
@@ -136,6 +141,7 @@ bool t_daemon::run(bool interactive)
     }
 
     mp_internals->core.get().get_miner().stop();
+    mp_internals->node_rpc.stop();
     mp_internals->rpc.stop();
     LOG_PRINT("Node stopped.", LOG_LEVEL_0);
     return true;
@@ -161,6 +167,7 @@ void t_daemon::stop()
 
   mp_internals->core.get().get_miner().stop();
   mp_internals->p2p.stop();
+  mp_internals->node_rpc.stop();
   mp_internals->rpc.stop();
   mp_internals.reset(nullptr); // Ensure resources are cleaned up before we return
 }

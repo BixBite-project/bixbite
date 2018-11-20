@@ -60,6 +60,7 @@ set(daemon_private_headers
   p2p.h
   protocol.h
   rpc.h
+  node_rpc.h
   rpc_command_executor.h
 
   # cryptonote_protocol
@@ -90,6 +91,7 @@ Bixbite_add_executable(daemon
 target_link_libraries(daemon
   PRIVATE
     rpc
+    node_rpc
     blockchain_db
     cryptonote_core
     crypto

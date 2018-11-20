@@ -3,6 +3,7 @@
 /// @brief implementaion for throttling of connection (count and rate-limit speed etc)
 
 // Copyright (c) 2014-2016, The Monero Project
+// Copyright (c) 2017-2018, The Bixbite Project
 // 
 // All rights reserved.
 // 

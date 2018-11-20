@@ -55,6 +55,7 @@ namespace cryptonote
     command_line::add_arg(desc, arg_testnet_rpc_bind_port);
     command_line::add_arg(desc, arg_restricted_rpc);
     command_line::add_arg(desc, arg_user_agent);
+    command_line::add_arg(desc, arg_callback_point);
   }
   //------------------------------------------------------------------------------------------------------------------------------
   core_rpc_server::core_rpc_server(
@@ -1396,6 +1397,12 @@ namespace cryptonote
       "rpc-bind-ip"
     , "IP for RPC server"
     , "127.0.0.1"
+    };
+
+ const command_line::arg_descriptor<std::string> core_rpc_server::arg_callback_point = {
+     "callback-point",
+     "Point to send notifications (incomming transacions)",
+     ""
     };
 
   const command_line::arg_descriptor<std::string> core_rpc_server::arg_rpc_bind_port = {
