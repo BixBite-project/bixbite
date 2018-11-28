@@ -37,6 +37,8 @@
 #define NODE_RPC_ERROR_SET_PASSWORD    -4
 #define NODE_RPC_ERROR_RECOVER         -5
 #define NODE_RPC_ERROR_COMMIT_TX       -6
+#define NODE_RPC_NOT_ENOUGH_MONEY      -7
+#define NODE_RPC_ERROR_TX              -8
 
 
 

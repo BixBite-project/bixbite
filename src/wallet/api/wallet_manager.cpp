@@ -161,7 +161,7 @@ void WalletManagerImpl::setDaemonAddress(const std::string &address)
     m_daemonAddress = address;
 }
 
-bool WalletManagerImpl::connected(uint32_t *version = NULL) const
+bool WalletManagerImpl::connected(uint32_t *version = nullptr) const
 {
     epee::json_rpc::request<cryptonote::COMMAND_RPC_GET_VERSION::request> req_t = AUTO_VAL_INIT(req_t);
     epee::json_rpc::response<cryptonote::COMMAND_RPC_GET_VERSION::response, std::string> resp_t = AUTO_VAL_INIT(resp_t);
@@ -264,7 +264,7 @@ bool WalletManagerImpl::checkPayment(const std::string &address_text, const std:
       if (pubkey == tx_out_to_key.key)
       {
         uint64_t amount;
-        if (tx.version == 1)
+        if (tx.version == 1 || tx.rct_signatures.type == rct::RCTTypeNull)
         {
           amount = tx.vout[n].amount;
         }

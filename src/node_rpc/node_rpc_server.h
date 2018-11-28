@@ -40,6 +40,7 @@
 #include "p2p/net_node.h"
 #include "cryptonote_protocol/cryptonote_protocol_handler.h"
 #include "../contrib/epee/include/string_coding.h"
+#include "../contrib/epee/include/time_helper.h"
 
 // yes, epee doesn't properly use its full namespace when calling its
 // functions from macros.  *sigh*
@@ -76,24 +77,26 @@ namespace cryptonote
 
     BEGIN_URI_MAP2()    
       BEGIN_JSON_RPC_MAP("/json_rpc")
-        MAP_JON_RPC("helloworld",             on_helloworld,              COMMAND_NODE_RPC_HELLOWORLD)
         MAP_JON_RPC("createaccount",          on_createaccount,           COMMAND_NODE_RPC_CREATE_ACCOUNT)
         MAP_JON_RPC("getwalletbalance",       on_get_walletbalance,  COMMAND_NODE_RPC_GETWALLETBALANCE)
         MAP_JON_RPC("getseed",                on_get_seed,                COMMAND_NODE_RPC_GET_SEED)
         MAP_JON_RPC("restoreaccount",         on_restore_account,         COMMAND_NODE_RPC_RESTORE_ACCOUNT)
         MAP_JON_RPC("transfer",               on_transfer,                COMMAND_NODE_RPC_TRANSFER)
         MAP_JON_RPC("gettransferfee",         on_get_transfer_fee,        COMMAND_NODE_RPC_GET_TRANSFER_FEE)
+        MAP_JON_RPC("gettransferhistory",     on_get_transfer_history,    COMMAND_NODE_RPC_GET_TRANSFER_HISTORY)
+        MAP_JON_RPC("gettransferdetail",      on_get_transfer_detail,     COMMAND_NODE_RPC_GET_TRANSFER_DETAIL)
       END_JSON_RPC_MAP()
     END_URI_MAP2()
 
     //json_rpc
-    bool on_helloworld(const COMMAND_NODE_RPC_HELLOWORLD::request& req, COMMAND_NODE_RPC_HELLOWORLD::response& res);
     bool on_createaccount(COMMAND_NODE_RPC_CREATE_ACCOUNT::request& req, COMMAND_NODE_RPC_CREATE_ACCOUNT::response& res);
     bool on_get_walletbalance(COMMAND_NODE_RPC_GETWALLETBALANCE::request& req, COMMAND_NODE_RPC_GETWALLETBALANCE::response& res);
     bool on_get_seed(COMMAND_NODE_RPC_GET_SEED::request& req, COMMAND_NODE_RPC_GET_SEED::response& res);
     bool on_restore_account(COMMAND_NODE_RPC_RESTORE_ACCOUNT::request& req, COMMAND_NODE_RPC_RESTORE_ACCOUNT::response& res);
     bool on_transfer(COMMAND_NODE_RPC_TRANSFER::request& req, COMMAND_NODE_RPC_TRANSFER::response& res);
     bool on_get_transfer_fee(COMMAND_NODE_RPC_GET_TRANSFER_FEE::request& req, COMMAND_NODE_RPC_GET_TRANSFER_FEE::response& res);
+    bool on_get_transfer_history(COMMAND_NODE_RPC_GET_TRANSFER_HISTORY::request& req, COMMAND_NODE_RPC_GET_TRANSFER_HISTORY::response& res);
+    bool on_get_transfer_detail(COMMAND_NODE_RPC_GET_TRANSFER_DETAIL::request& req, COMMAND_NODE_RPC_GET_TRANSFER_DETAIL::response& res);
     //-----------------------
 
 private:

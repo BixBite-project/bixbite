@@ -112,6 +112,12 @@ public:
                                         PendingTransaction::Priority priority = PendingTransaction::Priority_Low,
                                         uint32_t subaddr_account = 0,
                                         std::set<uint32_t> subaddr_indices = {});
+
+    PendingTransaction * createSweepAllTransaction(const std::string &dst_addr, const std::string &payment_id,
+                                                   optional<uint64_t> below_amount, uint32_t mixin_count,
+                                                   PendingTransaction::Priority priority = PendingTransaction::Priority_Low,
+                                                   uint32_t subaddr_account = 0,
+                                                   std::set<uint32_t> subaddr_indices = {});
     virtual PendingTransaction * createSweepUnmixableTransaction();
 
     virtual void disposeTransaction(PendingTransaction * t);

@@ -32,6 +32,7 @@
 #include "cryptonote_protocol/cryptonote_protocol_defs.h"
 #include "cryptonote_core/cryptonote_basic.h"
 #include "cryptonote_core/difficulty.h"
+#include "wallet/wallet2_api.h"
 #include "crypto/hash.h"
 
 namespace cryptonote
@@ -51,26 +52,6 @@ namespace cryptonote
 #define NODE_RPC_VERSION_MAJOR 0
 #define NODE_RPC_VERSION_MINOR 1
 #define NODE_RPC_VERSION (((NODE_RPC_VERSION_MAJOR)<<16)|(NODE_RPC_VERSION_MINOR))
-
-struct COMMAND_NODE_RPC_HELLOWORLD
-{
-    struct request
-    {
-        BEGIN_KV_SERIALIZE_MAP()
-        END_KV_SERIALIZE_MAP()
-    };
-
-    struct response
-    {
-        std::string phrase;
-        std::string status;
-
-        BEGIN_KV_SERIALIZE_MAP()
-        KV_SERIALIZE(phrase)
-        KV_SERIALIZE(status)
-        END_KV_SERIALIZE_MAP()
-    };
-};
 
 struct COMMAND_NODE_RPC_GETWALLETBALANCE
 {
@@ -188,12 +169,14 @@ struct COMMAND_NODE_RPC_TRANSFER {
         std::string password;
         std::string address;
         std::string amount;
+        bool is_sweep_all;
 
         BEGIN_KV_SERIALIZE_MAP()
         KV_SERIALIZE(account)
         KV_SERIALIZE(password)
         KV_SERIALIZE(address)
         KV_SERIALIZE(amount)
+        KV_SERIALIZE(is_sweep_all)
         END_KV_SERIALIZE_MAP()
     };
     struct response {
@@ -213,12 +196,14 @@ struct COMMAND_NODE_RPC_GET_TRANSFER_FEE {
         std::string password;
         std::string address;
         std::string amount;
+        bool is_sweep_all;
 
         BEGIN_KV_SERIALIZE_MAP()
         KV_SERIALIZE(account)
         KV_SERIALIZE(password)
         KV_SERIALIZE(address)
         KV_SERIALIZE(amount)
+        KV_SERIALIZE(is_sweep_all)
         END_KV_SERIALIZE_MAP()
     };
     struct response {
@@ -234,4 +219,84 @@ struct COMMAND_NODE_RPC_GET_TRANSFER_FEE {
     };
 };
 
+struct transfer_details
+{
+  uint64_t amount;
+  std::string tx_hash;
+  uint64_t tx_height;
+  int direction;
+  std::string datetime;
+
+
+  BEGIN_KV_SERIALIZE_MAP()
+    KV_SERIALIZE(amount)
+    KV_SERIALIZE(tx_hash)
+    KV_SERIALIZE(tx_height)
+    KV_SERIALIZE(direction)
+    KV_SERIALIZE(datetime)
+  END_KV_SERIALIZE_MAP()
+};
+
+struct COMMAND_NODE_RPC_GET_TRANSFER_HISTORY {
+    struct request {
+        std::string account;
+        std::string password;
+
+        BEGIN_KV_SERIALIZE_MAP()
+        KV_SERIALIZE(account)
+        KV_SERIALIZE(password)
+        END_KV_SERIALIZE_MAP()
+    };
+    struct response {
+
+        std::string status;
+        std::list<transfer_details> transfers;
+
+        BEGIN_KV_SERIALIZE_MAP()
+          KV_SERIALIZE(transfers)
+          KV_SERIALIZE(status)
+        END_KV_SERIALIZE_MAP()
+    };
+};
+struct COMMAND_NODE_RPC_GET_TRANSFER_DETAIL {
+    struct request {
+        std::string account;
+        std::string password;
+        std::string tx_id;
+
+        BEGIN_KV_SERIALIZE_MAP()
+        KV_SERIALIZE(account)
+        KV_SERIALIZE(password)
+        KV_SERIALIZE(tx_id)
+        END_KV_SERIALIZE_MAP()
+    };
+    struct response {
+
+        std::string status;
+
+        uint64_t amount;
+        uint64_t fee;
+        std::string tx_hash;
+        uint64_t tx_height;
+        int direction;
+        std::string datetime;
+        uint64_t confirmations;
+        bool isFailed;
+        bool isPending;
+
+        BEGIN_KV_SERIALIZE_MAP()
+          KV_SERIALIZE(amount)
+          KV_SERIALIZE(tx_hash)
+          KV_SERIALIZE(tx_height)
+          KV_SERIALIZE(direction)
+          KV_SERIALIZE(datetime)
+          KV_SERIALIZE(confirmations)
+          KV_SERIALIZE(isFailed)
+          KV_SERIALIZE(isPending)
+          KV_SERIALIZE(fee)
+        KV_SERIALIZE(status)
+
+        END_KV_SERIALIZE_MAP()
+    };
+};
 }
