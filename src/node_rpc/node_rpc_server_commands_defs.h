@@ -294,8 +294,7 @@ struct COMMAND_NODE_RPC_GET_TRANSFER_DETAIL {
           KV_SERIALIZE(isFailed)
           KV_SERIALIZE(isPending)
           KV_SERIALIZE(fee)
-        KV_SERIALIZE(status)
-
+          KV_SERIALIZE(status)
         END_KV_SERIALIZE_MAP()
     };
 };
