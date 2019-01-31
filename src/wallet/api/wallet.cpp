@@ -37,6 +37,7 @@
 #include "subaddress.h"
 #include "subaddress_account.h"
 #include "common_defines.h"
+#include "serialization/binary_utils.h"
 
 #include "mnemonics/electrum-words.h"
 #include <boost/format.hpp>
@@ -45,8 +46,10 @@
 
 using namespace std;
 using namespace cryptonote;
-
+#define CHACHA8_KEY_TAIL 0x8c
 namespace Monero {
+
+
 
 namespace {
 // copy-pasted from simplewallet
@@ -241,7 +244,7 @@ WalletImpl::~WalletImpl()
     delete m_subaddressAccount;
 }
 
-bool WalletImpl::create(const std::string &path, const std::string &password, const std::string &language)
+bool WalletImpl::create(const std::string &path, const std::string &password, const std::string &language, bool without_files)
 {
 
     clearStatus();
@@ -265,7 +268,10 @@ bool WalletImpl::create(const std::string &path, const std::string &password, co
     m_wallet->set_seed_language(language);
     crypto::secret_key recovery_val, secret_key;
     try {
-        recovery_val = m_wallet->generate(path, password, secret_key, false, false);
+        if(without_files)
+            recovery_val = m_wallet->generate_without_files(password, secret_key, false, false);
+        else
+            recovery_val = m_wallet->generate(path, password, secret_key, false, false);
         m_password = password;
         m_status = Status_Ok;
     } catch (const std::exception &e) {
@@ -294,6 +300,20 @@ bool WalletImpl::open(const std::string &path, const std::string &password)
         }
         m_wallet->load(path, password);
 
+        m_password = password;
+    } catch (const std::exception &e) {
+        LOG_ERROR("Error opening wallet: " << e.what());
+        m_status = Status_Critical;
+        m_errorString = e.what();
+    }
+    return m_status == Status_Ok;
+}
+bool WalletImpl::load_from_keys(const string &data, const string &password, const std::string &cache_file)
+{
+    clearStatus();
+    m_recoveringFromSeed = false;
+    try {
+        m_wallet->load_from_keys(data,password,cache_file);
         m_password = password;
     } catch (const std::exception &e) {
         LOG_ERROR("Error opening wallet: " << e.what());
@@ -393,7 +413,7 @@ bool WalletImpl::recoverFromKeys(const std::string &path,
 }
 
 
-bool WalletImpl::recover(const std::string &path, const std::string &seed)
+bool WalletImpl::recover(const std::string &path, const std::string &seed, bool without_files)
 {
     clearStatus();
     m_errorString.clear();
@@ -415,7 +435,10 @@ bool WalletImpl::recover(const std::string &path, const std::string &seed)
 
     try {
         m_wallet->set_seed_language(old_language);
-        m_wallet->generate(path, "", recovery_key, true, false);
+        if(without_files)
+            m_wallet->generate_without_files("", recovery_key, true, false);
+        else
+            m_wallet->generate(path, "", recovery_key, true, false);
         // TODO: wallet->init(daemon_address);
 
     } catch (const std::exception &e) {
@@ -527,7 +550,14 @@ std::string WalletImpl::publicSpendKey() const
 {
     return epee::string_tools::pod_to_hex(m_wallet->get_account().get_keys().m_account_address.m_spend_public_key);
 }
-
+std::string WalletImpl::get_store_keys()
+{
+    std::string account_data;
+    cryptonote::account_base account = m_wallet->get_account();
+    bool r = epee::serialization::store_t_to_binary(account, account_data);
+    CHECK_AND_ASSERT_THROW_MES(r, "failed to serialize wallet keys");
+    return account_data;
+}
 std::string WalletImpl::path() const
 {
     return m_wallet->path();
@@ -537,11 +567,13 @@ bool WalletImpl::store(const std::string &path)
 {
     clearStatus();
     try {
+
         if (path.empty()) {
             m_wallet->store();
         } else {
             m_wallet->store_to(path, m_password);
         }
+
     } catch (const std::exception &e) {
         LOG_ERROR("Error storing wallet: " << e.what());
         m_status = Status_Error;
@@ -550,7 +582,21 @@ bool WalletImpl::store(const std::string &path)
 
     return m_status == Status_Ok;
 }
+bool WalletImpl::store_cache(const std::string &path)
+{
+    clearStatus();
+    try {
 
+        m_wallet->store_cache(path);
+
+    } catch (const std::exception &e) {
+        LOG_ERROR("Error storing wallet: " << e.what());
+        m_status = Status_Error;
+        m_errorString = e.what();
+    }
+
+    return m_status == Status_Ok;
+}
 string WalletImpl::filename() const
 {
     return m_wallet->get_wallet_file();

@@ -78,53 +78,59 @@ size_t get_max_tx_size()
 //-----------------------------------------------------------------------------------------------
 bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t &reward, uint64_t height) {
 
-     uint64_t base_reward;
-      if (height > 0)
-      {
-          base_reward = (MONEY_SUPPLY - already_generated_coins) >> EMISSION_SPEED_FACTOR;
-          base_reward=base_reward/1.4822;
-      }
-      else
-      {
+    uint64_t base_reward;
+
+    if(height > 195000)
+    {
+        base_reward = (MONEY_SUPPLY - already_generated_coins) >> EMISSION_SPEED_FACTOR;
+        base_reward=base_reward/50.4822;
+    }
+    else if (height > 0)
+    {
+        base_reward = (MONEY_SUPPLY - already_generated_coins) >> EMISSION_SPEED_FACTOR;
+        base_reward=base_reward/1.4822;
+    }
+    else
+    {
         base_reward = GENESIS_BLOCK_REWARD;
         base_reward = base_reward / 1000 * 1000;
-      }
+    }
 
     if (median_size < CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE) {
-      median_size = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
+        median_size = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
     }
 
     if (current_block_size > 2 * median_size) {
-      LOG_PRINT_L1("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
-      return false;
+        LOG_PRINT_L1("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
+        return false;
     }
 
     if (current_block_size <= (median_size < BLOCK_SIZE_GROWTH_FAVORED_ZONE ? median_size * 110 / 100 : median_size)) {
-      reward = base_reward;
-      return true;
-     }
+        reward = base_reward;
+        return true;
+    }
 
-      assert(median_size < std::numeric_limits<uint32_t>::max());
-      assert(current_block_size < std::numeric_limits<uint32_t>::max());
+    assert(median_size < std::numeric_limits<uint32_t>::max());
+    assert(current_block_size < std::numeric_limits<uint32_t>::max());
 
-      uint64_t product_hi;
-      // BUGFIX: 32-bit saturation bug (e.g. ARM7), the result was being
-      // treated as 32-bit by default.
-      uint64_t multiplicand = 2 * median_size - current_block_size;
-      multiplicand *= current_block_size;
-      uint64_t product_lo = mul128(base_reward, multiplicand, &product_hi);
+    uint64_t product_hi;
+    // BUGFIX: 32-bit saturation bug (e.g. ARM7), the result was being
+    // treated as 32-bit by default.
+    uint64_t multiplicand = 2 * median_size - current_block_size;
+    multiplicand *= current_block_size;
+    uint64_t product_lo = mul128(base_reward, multiplicand, &product_hi);
 
-      uint64_t reward_hi;
-      uint64_t reward_lo;
-      div128_32(product_hi, product_lo, static_cast<uint32_t>(median_size), &reward_hi, &reward_lo);
-      div128_32(reward_hi, reward_lo, static_cast<uint32_t>(median_size), &reward_hi, &reward_lo);
-      assert(0 == reward_hi);
-      assert(reward_lo < base_reward);
+    uint64_t reward_hi;
+    uint64_t reward_lo;
+    div128_32(product_hi, product_lo, static_cast<uint32_t>(median_size), &reward_hi, &reward_lo);
+    div128_32(reward_hi, reward_lo, static_cast<uint32_t>(median_size), &reward_hi, &reward_lo);
+    assert(0 == reward_hi);
+    assert(reward_lo < base_reward);
 
-      reward = reward_lo;
-      return true;
+    reward = reward_lo;
+    return true;
 
-   /* uint64_t base_reward;
+    /* uint64_t base_reward;
     uint64_t round_factor = 1000; // 1 * pow(10, 7)
     if (height > 0)
     {
@@ -255,7 +261,7 @@ bool get_account_address_from_str(
         , std::string const & str
         )
 {
-     LOG_PRINT_L1("is tesnet? "<<testnet);
+    LOG_PRINT_L1("is tesnet? "<<testnet);
     uint64_t address_prefix = testnet ?
                 config::testnet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX;
     uint64_t integrated_address_prefix = testnet ?

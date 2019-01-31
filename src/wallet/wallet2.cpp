@@ -2012,6 +2012,100 @@ namespace
  * \param keys_file_name Name of wallet file
  * \param password       Password of wallet file
  */
+bool wallet2::load_keys_from_mem(const std::string& data, const std::string& password)
+{ bool r ;
+ /* wallet2::keys_file_data keys_file_data;
+  // Decrypt the contents
+  bool r = ::serialization::parse_binary(data, keys_file_data);
+  THROW_WALLET_EXCEPTION_IF(!r, error::wallet_internal_error, "internal error: failed to deserialize mem data");
+  crypto::chacha8_key key;
+  crypto::generate_chacha8_key(password, key);
+  std::string account_data;
+  account_data.resize(keys_file_data.account_data.size());
+  crypto::chacha8(keys_file_data.account_data.data(), keys_file_data.account_data.size(), key, keys_file_data.iv, &account_data[0]);
+*/
+  // The contents should be JSON if the wallet follows the new format.
+  std::string account_data=data;
+  rapidjson::Document json;
+  if (json.Parse(account_data.c_str()).HasParseError())
+  {
+    is_old_file_format = true;
+    m_watch_only = false;
+    m_always_confirm_transfers = false;
+    m_default_mixin = 0;
+    m_default_priority = 0;
+    m_auto_refresh = true;
+    m_refresh_type = RefreshType::RefreshDefault;
+    m_confirm_missing_payment_id = true;
+  }
+  else
+  {
+    if (!json.HasMember("key_data"))
+    {
+      LOG_ERROR("Field key_data not found in JSON");
+      return false;
+    }
+    if (!json["key_data"].IsString())
+    {
+      LOG_ERROR("Field key_data found in JSON, but not String");
+      return false;
+    }
+    const char *field_key_data = json["key_data"].GetString();
+    account_data = std::string(field_key_data, field_key_data + json["key_data"].GetStringLength());
+
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, seed_language, std::string, String, false, std::string());
+    if (field_seed_language_found)
+    {
+      set_seed_language(field_seed_language);
+    }
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, watch_only, int, Int, false, false);
+    m_watch_only = field_watch_only;
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, always_confirm_transfers, int, Int, false, true);
+    m_always_confirm_transfers = field_always_confirm_transfers;
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, store_tx_keys, int, Int, false, true);
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, store_tx_info, int, Int, false, true);
+    m_store_tx_info = ((field_store_tx_keys != 0) || (field_store_tx_info != 0));
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, default_mixin, unsigned int, Uint, false, 0);
+    m_default_mixin = field_default_mixin;
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, default_priority, unsigned int, Uint, false, 0);
+    if (field_default_priority_found)
+    {
+      m_default_priority = field_default_priority;
+    }
+    else
+    {
+      GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, default_fee_multiplier, unsigned int, Uint, false, 0);
+      if (field_default_fee_multiplier_found)
+        m_default_priority = field_default_fee_multiplier;
+      else
+        m_default_priority = 0;
+    }
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, auto_refresh, int, Int, false, true);
+    m_auto_refresh = field_auto_refresh;
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, refresh_type, int, Int, false, RefreshType::RefreshDefault);
+    m_refresh_type = RefreshType::RefreshDefault;
+    if (field_refresh_type_found)
+    {
+      if (field_refresh_type == RefreshFull || field_refresh_type == RefreshOptimizeCoinbase || field_refresh_type == RefreshNoCoinbase)
+        m_refresh_type = (RefreshType)field_refresh_type;
+      else
+        LOG_PRINT_L0("Unknown refresh-type value (" << field_refresh_type << "), using default");
+    }
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, refresh_height, uint64_t, Uint64, false, 0);
+    m_refresh_from_block_height = field_refresh_height;
+    GET_FIELD_FROM_JSON_RETURN_ON_ERROR(json, confirm_missing_payment_id, int, Int, false, true);
+    m_confirm_missing_payment_id = field_confirm_missing_payment_id;
+  }
+
+  const cryptonote::account_keys& keys = m_account.get_keys();
+  r = epee::serialization::load_t_from_binary(m_account, account_data);
+  r = r && verify_keys(keys.m_view_secret_key,  keys.m_account_address.m_view_public_key);
+  if(!m_watch_only)
+    r = r && verify_keys(keys.m_spend_secret_key, keys.m_account_address.m_spend_public_key);
+  THROW_WALLET_EXCEPTION_IF(!r, error::invalid_password);
+  return true;
+}
+
 bool wallet2::load_keys(const std::string& keys_file_name, const std::string& password)
 {
   wallet2::keys_file_data keys_file_data;
@@ -2260,7 +2354,38 @@ crypto::secret_key wallet2::generate(const std::string& wallet_, const std::stri
   store();
   return retval;
 }
+crypto::secret_key wallet2::generate_without_files(const std::string& password,
+  const crypto::secret_key& recovery_param, bool recover, bool two_random)
+{
+  clear();
+  boost::system::error_code ignored_ec;
 
+  crypto::secret_key retval = m_account.generate(recovery_param, recover, two_random);
+
+  m_account_public_address = m_account.get_keys().m_account_address;
+  m_watch_only = false;
+
+  if(m_refresh_from_block_height == 0 && !recover){
+    // Wallets created offline don't know blockchain height.
+    // Set blockchain height calculated from current date/time
+    // -1 week for fluctuations in block time and machine date/time setup.
+    // avg seconds per block
+    const int seconds_per_block = DIFFICULTY_TARGET;
+    // ~num blocks per week
+    const uint64_t blocks_per_week = 60*60*24*7/seconds_per_block;
+    uint64_t approx_blockchain_height = get_approximate_blockchain_height();
+    if(approx_blockchain_height > 0) {
+      m_refresh_from_block_height = approx_blockchain_height - blocks_per_week;
+    }
+  }
+
+  cryptonote::block b;
+  generate_genesis(b);
+  m_blockchain.push_back(get_block_hash(b));
+  add_subaddress_account(tr("Primary account"));
+
+  return retval;
+}
 /*!
 * \brief Creates a watch only wallet from a public address and a view secret key.
 * \param  wallet_        Name of wallet file
@@ -2606,6 +2731,49 @@ void wallet2::load(const std::string& wallet_, const std::string& password)
   m_local_bc_height = m_blockchain.size();
 }
 //----------------------------------------------------------------------------------------------------
+void wallet2::load_from_keys(const string &data, const string &password, const std::string &cache_file)
+{
+    clear();
+
+    if (!load_keys_from_mem(data, password))
+    {
+      THROW_WALLET_EXCEPTION_IF(true, error::file_read_error, m_keys_file);
+    }
+    LOG_PRINT_L0("Loaded wallet keys file, with public address: " << m_account.get_public_address_str(m_testnet));
+
+    //keys loaded ok!
+    //try to load wallet file. but even if we failed, it is not big problem
+
+    m_account_public_address = m_account.get_keys().m_account_address;
+
+    boost::system::error_code e;
+    bool exists = boost::filesystem::exists(m_account.get_public_address_str(m_testnet), e);
+    if (!m_account.get_public_address_str(m_testnet).empty() && exists)
+    {
+      load_cache(m_account.get_public_address_str(m_testnet));
+    }
+    else
+    {
+        rescan_blockchain(true);
+    }
+
+    cryptonote::block genesis;
+    generate_genesis(genesis);
+    crypto::hash genesis_hash = get_block_hash(genesis);
+
+    if (m_blockchain.empty())
+    {
+      m_blockchain.push_back(genesis_hash);
+    }
+    else
+    {
+      check_genesis(genesis_hash);
+    }
+
+    m_local_bc_height = m_blockchain.size();
+
+}
+//----------------------------------------------------------------------------------------------------
 void wallet2::check_genesis(const crypto::hash& genesis_hash) const {
   std::string what("Genesis block mismatch. You probably use wallet without testnet flag with blockchain from test network or vice versa");
 
@@ -2615,6 +2783,89 @@ void wallet2::check_genesis(const crypto::hash& genesis_hash) const {
 std::string wallet2::path() const
 {
   return m_wallet_file;
+}
+void  wallet2::load_cache(const std::string &path)
+{
+    tools::wallet2::cache_file_data cache_file_data;
+    std::string buf;
+    bool r = epee::file_io_utils::load_file_to_string(path, buf);
+    THROW_WALLET_EXCEPTION_IF(!r, tools::error::file_read_error, path);
+    // try to read it as an encrypted cache
+    try
+    {
+        LOG_PRINT_L1("Trying to decrypt cache data");
+        r = ::serialization::parse_binary(buf, cache_file_data);
+        THROW_WALLET_EXCEPTION_IF(!r, tools::error::wallet_internal_error, "internal error: failed to deserialize \"" + path + '\"');
+        crypto::chacha8_key key;
+        generate_chacha8_key_from_secret_keys(key);
+        std::string cache_data;
+        cache_data.resize(cache_file_data.cache_data.size());
+        crypto::chacha8(cache_file_data.cache_data.data(), cache_file_data.cache_data.size(), key, cache_file_data.iv, &cache_data[0]);
+
+        std::stringstream iss;
+        iss << cache_data;
+        try {
+            boost::archive::portable_binary_iarchive ar(iss);
+            ar >> *this;
+        }
+        catch (...)
+        {
+            LOG_PRINT_L0("Failed to open portable binary, trying unportable");
+            boost::filesystem::copy_file(path, path + ".unportable", boost::filesystem::copy_option::overwrite_if_exists);
+            iss.str("");
+            iss << cache_data;
+            boost::archive::binary_iarchive ar(iss);
+            ar >> *this;
+        }
+    }
+    catch (...)
+    {
+        LOG_PRINT_L1("Failed to load encrypted cache, trying unencrypted");
+        std::stringstream iss;
+        iss << buf;
+        try {
+            boost::archive::portable_binary_iarchive ar(iss);
+            ar >> *this;
+        }
+        catch (...)
+        {
+            LOG_PRINT_L0("Failed to open portable binary, trying unportable");
+            boost::filesystem::copy_file(path, path + ".unportable", boost::filesystem::copy_option::overwrite_if_exists);
+            iss.str("");
+            iss << buf;
+            boost::archive::binary_iarchive ar(iss);
+            ar >> *this;
+        }
+    }
+    THROW_WALLET_EXCEPTION_IF(
+                m_account_public_address.m_spend_public_key != m_account.get_keys().m_account_address.m_spend_public_key ||
+            m_account_public_address.m_view_public_key  != m_account.get_keys().m_account_address.m_view_public_key,
+                error::wallet_files_doesnt_correspond, m_keys_file, path);
+}
+bool  wallet2::store_cache(const std::string &path)
+{
+    // preparing wallet data
+    std::stringstream oss;
+    boost::archive::portable_binary_oarchive ar(oss);
+    ar << *this;
+
+    cache_file_data cache_file_data = boost::value_initialized<tools::wallet2::cache_file_data>();
+    cache_file_data.cache_data = oss.str();
+    crypto::chacha8_key key;
+    generate_chacha8_key_from_secret_keys(key);
+    std::string cipher;
+    cipher.resize(cache_file_data.cache_data.size());
+    cache_file_data.iv = crypto::rand<crypto::chacha8_iv>();
+    crypto::chacha8(cache_file_data.cache_data.data(), cache_file_data.cache_data.size(), key, cache_file_data.iv, &cipher[0]);
+    cache_file_data.cache_data = cipher;
+
+    // save to new file
+    std::ofstream ostr;
+    ostr.open(path, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
+    binary_archive<true> oar(ostr);
+    bool success = ::serialization::serialize(oar, cache_file_data);
+    ostr.close();
+    THROW_WALLET_EXCEPTION_IF(!success || !ostr.good(), error::file_save_error, path);
 }
 //----------------------------------------------------------------------------------------------------
 void wallet2::store()
@@ -2924,7 +3175,7 @@ void wallet2::rescan_blockchain(bool refresh)
   // process genesis tx
   std::vector<uint64_t> indices;
   indices.push_back(0);
-  process_new_transaction(get_transaction_hash(genesis.miner_tx), genesis.miner_tx, indices, 0, time(NULL), true, false);
+  process_new_transaction(get_transaction_hash(genesis.miner_tx), genesis.miner_tx, indices, 0, time(nullptr), true, false);
 
   if (refresh)
     this->refresh();

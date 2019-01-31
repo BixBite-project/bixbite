@@ -168,11 +168,13 @@ struct COMMAND_NODE_RPC_TRANSFER {
         std::string account;
         std::string password;
         std::string address;
+        std::string paymentid;
         std::string amount;
         bool is_sweep_all;
 
         BEGIN_KV_SERIALIZE_MAP()
         KV_SERIALIZE(account)
+        KV_SERIALIZE(paymentid)
         KV_SERIALIZE(password)
         KV_SERIALIZE(address)
         KV_SERIALIZE(amount)

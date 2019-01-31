@@ -83,7 +83,8 @@ static const struct {
     uint8_t threshold;
     time_t time;
 } mainnet_hard_forks[] = {
-    { 3, 1, 0, 1522540800 }
+    { 3, 1, 0, 1522540800 },     // April 01, 2018
+    { 4, 195000, 0, 1549306800 } // February 05, 2019
 };
 static const uint64_t mainnet_hard_fork_version_1_till = (uint64_t)-1;
 
@@ -93,7 +94,8 @@ static const struct {
     uint8_t threshold;
     time_t time;
 } testnet_hard_forks[] = {
-{ 3, 1, 0, 1522540800 } // April 01, 2018
+    { 3, 1, 0, 1522540800},
+    { 4, 48000, 0, 1548200000}
 };
 static const uint64_t testnet_hard_fork_version_1_till = (uint64_t)-1;
 

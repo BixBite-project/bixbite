@@ -78,7 +78,7 @@ namespace cryptonote
     BEGIN_URI_MAP2()    
       BEGIN_JSON_RPC_MAP("/json_rpc")
         MAP_JON_RPC("createaccount",          on_createaccount,           COMMAND_NODE_RPC_CREATE_ACCOUNT)
-        MAP_JON_RPC("getwalletbalance",       on_get_walletbalance,  COMMAND_NODE_RPC_GETWALLETBALANCE)
+        MAP_JON_RPC("getwalletbalance",       on_get_wallet_balance,       COMMAND_NODE_RPC_GETWALLETBALANCE)
         MAP_JON_RPC("getseed",                on_get_seed,                COMMAND_NODE_RPC_GET_SEED)
         MAP_JON_RPC("restoreaccount",         on_restore_account,         COMMAND_NODE_RPC_RESTORE_ACCOUNT)
         MAP_JON_RPC("transfer",               on_transfer,                COMMAND_NODE_RPC_TRANSFER)
@@ -90,7 +90,7 @@ namespace cryptonote
 
     //json_rpc
     bool on_createaccount(COMMAND_NODE_RPC_CREATE_ACCOUNT::request& req, COMMAND_NODE_RPC_CREATE_ACCOUNT::response& res);
-    bool on_get_walletbalance(COMMAND_NODE_RPC_GETWALLETBALANCE::request& req, COMMAND_NODE_RPC_GETWALLETBALANCE::response& res);
+    bool on_get_wallet_balance(COMMAND_NODE_RPC_GETWALLETBALANCE::request& req, COMMAND_NODE_RPC_GETWALLETBALANCE::response& res);
     bool on_get_seed(COMMAND_NODE_RPC_GET_SEED::request& req, COMMAND_NODE_RPC_GET_SEED::response& res);
     bool on_restore_account(COMMAND_NODE_RPC_RESTORE_ACCOUNT::request& req, COMMAND_NODE_RPC_RESTORE_ACCOUNT::response& res);
     bool on_transfer(COMMAND_NODE_RPC_TRANSFER::request& req, COMMAND_NODE_RPC_TRANSFER::response& res);

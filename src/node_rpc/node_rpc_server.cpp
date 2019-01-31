@@ -125,14 +125,12 @@ bool node_rpc_server::on_createaccount(COMMAND_NODE_RPC_CREATE_ACCOUNT::request&
 {
     CHECK_NODE_BUSY();
 
-    std::string uuid=boost::uuids::to_string(boost::uuids::random_generator()());
-
     Monero::WalletImpl wal(false);
     wal.init("http://127.0.0.1:44041",0);
 
     LOG_PRINT_L2("wallet status: "<<wal.status());
 
-    if(!wal.create(uuid,req.password,req.language))
+    if(!wal.create("",req.password,req.language))
     {
         res.status = NODE_RPC_ERROR_CREATE;
         return true;
@@ -140,19 +138,20 @@ bool node_rpc_server::on_createaccount(COMMAND_NODE_RPC_CREATE_ACCOUNT::request&
     wal.setRefreshFromBlockHeight(wal.daemonBlockChainHeight()-1);
 
     res.address=wal.mainAddress();
-    res.account=base64_encode(uuid);
+    res.account=base64_encode(wal.get_store_keys());
+    //res.account=base64_encode(uuid);
     res.seed=wal.seed();
     res.view_key=wal.publicViewKey();
 
 
-    wal.store("");
+    wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool node_rpc_server::on_get_walletbalance(COMMAND_NODE_RPC_GETWALLETBALANCE::request& req, COMMAND_NODE_RPC_GETWALLETBALANCE::response& res)
+bool node_rpc_server::on_get_wallet_balance(COMMAND_NODE_RPC_GETWALLETBALANCE::request& req, COMMAND_NODE_RPC_GETWALLETBALANCE::response& res)
 {
     CHECK_NODE_BUSY();
 
@@ -161,7 +160,7 @@ bool node_rpc_server::on_get_walletbalance(COMMAND_NODE_RPC_GETWALLETBALANCE::re
 
     LOG_PRINT_L2("wallet status: "<<wal.status());
 
-    if(!wal.open(base64_decode(req.account),req.password))
+    if(!wal.load_from_keys(base64_decode(req.account),req.password))
     {
         res.status = NODE_RPC_ERROR_OPEN;
         return true;
@@ -172,7 +171,7 @@ bool node_rpc_server::on_get_walletbalance(COMMAND_NODE_RPC_GETWALLETBALANCE::re
     res.balance=wal.balance();
     res.unlocked_balance=wal.unlockedBalance();
 
-    wal.store("");
+    wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }
@@ -185,7 +184,7 @@ bool node_rpc_server::on_get_seed(COMMAND_NODE_RPC_GET_SEED::request& req, COMMA
 
     Monero::WalletImpl wal(false);
     wal.init("http://127.0.0.1:44041",0);
-    if(!wal.open(base64_decode(req.account),req.password))
+    if(!wal.load_from_keys(base64_decode(req.account),req.password))
     {
         res.status = NODE_RPC_ERROR_OPEN;
         return true;
@@ -193,7 +192,7 @@ bool node_rpc_server::on_get_seed(COMMAND_NODE_RPC_GET_SEED::request& req, COMMA
 
 
     res.seed=wal.seed();
-
+    wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }
@@ -217,18 +216,18 @@ bool node_rpc_server::on_restore_account(COMMAND_NODE_RPC_RESTORE_ACCOUNT::reque
     }
     wal.setRefreshFromBlockHeight(0);
 
-    if(!wal.setPassword(req.password))
+  /*  if(!wal.setPassword(req.password))
     {
         res.status = NODE_RPC_ERROR_SET_PASSWORD;
         return true;
     }
-
+*/
     res.address=wal.mainAddress();
-    res.account=base64_encode(uuid);
+    res.account=base64_encode(wal.get_store_keys());
     res.seed=wal.seed();
     res.view_key=wal.publicViewKey();
 
-    wal.store("");
+    //wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }
@@ -238,23 +237,25 @@ bool node_rpc_server::on_transfer(COMMAND_NODE_RPC_TRANSFER::request& req, COMMA
 
     Monero::WalletImpl wal(false);
     wal.init("http://127.0.0.1:44041",0);
-    if(!wal.open(base64_decode(req.account),req.password))
+    if(!wal.load_from_keys(base64_decode(req.account),req.password))
     {
         res.status = NODE_RPC_ERROR_OPEN;
         return true;
     }
     uint64_t amm=wal.amountFromString(req.amount);
 
+    LOG_PRINT_L0("transfer count: "<<req.amount);
+    LOG_PRINT_L0("transfer paymentid: "<<req.paymentid);
     LOG_PRINT_L2("is sweep all transaction?: "<<(req.is_sweep_all ? "yes" : "no"));
 
     Monero::PendingTransaction *trans;
     if(req.is_sweep_all)
     {
-        trans=wal.createSweepAllTransaction(req.address,"",amm,5);
+        trans=wal.createSweepAllTransaction(req.address,req.paymentid,amm,5);
     }
     else
     {
-        trans=wal.createTransaction(req.address,"",amm,5);
+        trans=wal.createTransaction(req.address,req.paymentid,amm,5);
     }
     if(trans->status())
     {
@@ -271,7 +272,7 @@ bool node_rpc_server::on_transfer(COMMAND_NODE_RPC_TRANSFER::request& req, COMMA
     }
 
     wal.disposeTransaction(trans);
-    wal.store("");
+    wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }
@@ -281,7 +282,7 @@ bool node_rpc_server::on_get_transfer_fee(COMMAND_NODE_RPC_GET_TRANSFER_FEE::req
 
     Monero::WalletImpl wal(false);
     wal.init("127.0.0.1:44041",0);
-    if(!wal.open(base64_decode(req.account),req.password))
+    if(!wal.load_from_keys(base64_decode(req.account),req.password))
     {
         res.status = NODE_RPC_ERROR_OPEN;
         return true;
@@ -305,7 +306,7 @@ bool node_rpc_server::on_get_transfer_fee(COMMAND_NODE_RPC_GET_TRANSFER_FEE::req
         wal.disposeTransaction(trans);
         return true;
     }
-    wal.store("");
+    wal.store_cache(wal.mainAddress());
     res.fee=trans->fee();
     wal.disposeTransaction(trans);
     res.status = NODE_RPC_STATUS_OK;
@@ -318,7 +319,7 @@ bool node_rpc_server::on_get_transfer_history(COMMAND_NODE_RPC_GET_TRANSFER_HIST
 
     Monero::WalletImpl wal(false);
     wal.init("127.0.0.1:44041",0);
-    if(!wal.open(base64_decode(req.account),req.password))
+    if(!wal.load_from_keys(base64_decode(req.account),req.password))
     {
         res.status = NODE_RPC_ERROR_OPEN;
         return true;
@@ -339,7 +340,7 @@ bool node_rpc_server::on_get_transfer_history(COMMAND_NODE_RPC_GET_TRANSFER_HIST
         rpc_transfers.datetime=epee::misc_utils::get_time_str(td->timestamp());
         res.transfers.push_back(rpc_transfers);
     }
-    wal.store("");
+    wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }
@@ -350,7 +351,7 @@ bool node_rpc_server::on_get_transfer_detail(COMMAND_NODE_RPC_GET_TRANSFER_DETAI
 
     Monero::WalletImpl wal(false);
     wal.init("127.0.0.1:44041",0);
-    if(!wal.open(base64_decode(req.account),req.password))
+    if(!wal.load_from_keys(base64_decode(req.account),req.password))
     {
         res.status = NODE_RPC_ERROR_OPEN;
         return true;
@@ -368,7 +369,7 @@ bool node_rpc_server::on_get_transfer_detail(COMMAND_NODE_RPC_GET_TRANSFER_DETAI
     res.isFailed=tx_info->isFailed();
     res.isPending=tx_info->isPending();
     res.fee=tx_info->fee();
-    wal.store("");
+    wal.store_cache(wal.mainAddress());
     res.status = NODE_RPC_STATUS_OK;
     return true;
 }

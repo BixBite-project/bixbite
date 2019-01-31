@@ -100,16 +100,16 @@ namespace cryptonote
         if (m_checkpoints_updating.test_and_set()) return true;
 
         bool res = true;
-        if (time(NULL) - m_last_dns_checkpoints_update >= 3600)
+        if (time(nullptr) - m_last_dns_checkpoints_update >= 3600)
         {
             res = m_blockchain_storage.update_checkpoints(m_checkpoints_path, true);
-            m_last_dns_checkpoints_update = time(NULL);
-            m_last_json_checkpoints_update = time(NULL);
+            m_last_dns_checkpoints_update = time(nullptr);
+            m_last_json_checkpoints_update = time(nullptr);
         }
-        else if (time(NULL) - m_last_json_checkpoints_update >= 600)
+        else if (time(nullptr) - m_last_json_checkpoints_update >= 600)
         {
             res = m_blockchain_storage.update_checkpoints(m_checkpoints_path, false);
-            m_last_json_checkpoints_update = time(NULL);
+            m_last_json_checkpoints_update = time(nullptr);
         }
 
         m_checkpoints_updating.clear();
@@ -264,7 +264,7 @@ namespace cryptonote
     //-----------------------------------------------------------------------------------------------
     bool core::init(const boost::program_options::variables_map& vm, const cryptonote::test_options *test_options)
     {
-        m_fakechain = test_options != NULL;
+        m_fakechain = test_options != nullptr;
         bool r = handle_command_line(vm);
 
         r = m_mempool.init(m_fakechain ? std::string() : m_config_folder);
@@ -1145,7 +1145,7 @@ namespace cryptonote
     //-----------------------------------------------------------------------------------------------
     bool core::check_fork_time()
     {
-        /*HardFork::State state = m_blockchain_storage.get_hard_fork_state();
+       HardFork::State state = m_blockchain_storage.get_hard_fork_state();
     switch (state) {
       case HardFork::LikelyForked:
         LOG_PRINT_RED_L0(ENDL
@@ -1162,7 +1162,7 @@ namespace cryptonote
         break;
       default:
         break;
-    }*/
+    }
         return true;
     }
     //-----------------------------------------------------------------------------------------------

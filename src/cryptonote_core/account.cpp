@@ -75,7 +75,7 @@ DISABLE_VS_WARNINGS(4244 4345)
     generate_keys(m_keys.m_account_address.m_view_public_key, m_keys.m_view_secret_key, second, two_random ? false : true);
 
     struct tm timestamp = {0};
-    timestamp.tm_year = 2017 - 1900;  // year 2017
+    timestamp.tm_year = 2018 - 1900;  // year 2018
     timestamp.tm_mon = 4 - 1;  // month April
     timestamp.tm_mday = 8;  // 8th
     timestamp.tm_hour = 0;
@@ -88,7 +88,7 @@ DISABLE_VS_WARNINGS(4244 4345)
     }
     else
     {
-      m_creation_timestamp = time(NULL);
+      m_creation_timestamp = time(nullptr);
     }
 
     if (m_creation_timestamp == (uint64_t)-1) // failure
@@ -103,7 +103,7 @@ DISABLE_VS_WARNINGS(4244 4345)
     m_keys.m_view_secret_key = viewkey;
 
     struct tm timestamp = {0};
-    timestamp.tm_year = 2017 - 1900;  // year 2017
+    timestamp.tm_year = 2018 - 1900;  // year 2018
     timestamp.tm_mon = 4 - 1;  // month april
     timestamp.tm_mday = 8;  // 8th of april
     timestamp.tm_hour = 0;

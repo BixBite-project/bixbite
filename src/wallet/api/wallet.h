@@ -34,6 +34,7 @@
 
 #include "wallet/wallet2_api.h"
 #include "wallet/wallet2.h"
+#include "crypto/chacha8.h"
 
 #include <string>
 #include <boost/thread/mutex.hpp>
@@ -49,15 +50,17 @@ class SubaddressImpl;
 class SubaddressAccountImpl;
 struct Wallet2CallbackImpl;
 
+
 class WalletImpl : public Wallet
 {
 public:
     WalletImpl(bool testnet = false);
     ~WalletImpl();
     bool create(const std::string &path, const std::string &password,
-                const std::string &language);
+                const std::string &language, bool without_files=true);
     bool open(const std::string &path, const std::string &password);
-    bool recover(const std::string &path, const std::string &seed);
+    bool load_from_keys(const string &data, const string &password, const std::string &cache_file = "");
+    bool recover(const std::string &path, const std::string &seed, bool without_files=true);
     bool recoverFromKeys(const std::string &path, const std::string &language, const std::string &address_string,
         const std::string &viewkey_string, const std::string &spendkey_string = "");
 		bool close(bool store);
@@ -74,8 +77,10 @@ public:
     std::string publicViewKey() const;
     std::string secretSpendKey() const;
     std::string publicSpendKey() const;
+    std::string get_store_keys();
     std::string path() const;
     bool store(const std::string &path);
+    bool store_cache(const std::string &path);
     std::string filename() const;
     std::string keysFilename() const;
     void init(const std::string &daemon_address, uint64_t upper_transaction_size_limit, bool enable_ssl=false, const char* cacerts_path=nullptr);
