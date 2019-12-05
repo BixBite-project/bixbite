@@ -57,11 +57,18 @@ using namespace nOT::nUtils; // TODO
 
 #define CONNECTION_CLEANUP_TIME 30 // seconds
 
+#if BOOST_VERSION >= 107000
+#define GET_IO_SERVICE(s) ((boost::asio::io_context&)(s).get_executor().context())
+#else
+#define GET_IO_SERVICE(s) ((s).get_io_service())
+#endif
+
 PRAGMA_WARNING_PUSH
 namespace epee
 {
 namespace net_utils
 {
+
   /************************************************************************/
   /*                                                                      */
   /************************************************************************/
@@ -202,7 +209,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   template<class t_protocol_handler>
   boost::asio::io_service& connection<t_protocol_handler>::get_io_service()
   {
-    return socket_.get_io_service();
+    return GET_IO_SERVICE(socket_);
   }
   //---------------------------------------------------------------------------------
   template<class t_protocol_handler>
@@ -361,7 +368,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
     if(!m_is_multithreaded)
     {
       //single thread model, we can wait in blocked call
-      size_t cnt = socket_.get_io_service().run_one();
+      size_t cnt = GET_IO_SERVICE(socket_).run_one();
       if(!cnt)//service is going to quit
         return false;
     }else
@@ -371,7 +378,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
       //if no handlers were called
       //TODO: Maybe we need to have have critical section + event + callback to upper protocol to
       //ask it inside(!) critical region if we still able to go in event wait...
-      size_t cnt = socket_.get_io_service().poll_one();     
+      size_t cnt = GET_IO_SERVICE(socket_).poll_one();     
       if(!cnt)
         misc_utils::sleep_no_w(0);
     }

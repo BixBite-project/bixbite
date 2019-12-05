@@ -184,14 +184,14 @@ inline bool do_serialize(Archive &ar, bool &v)
  *  \brief begins the environment of the DSL
  *  \detailed for described the serialization of an object
  */
-#define BEGIN_SERIALIZE_OBJECT()					\
+#define BEGIN_SERIALIZE_OBJECT()                                        \
   template <bool W, template <bool> class Archive>			\
   bool do_serialize(Archive<W> &ar) {					\
     ar.begin_object();							\
     bool r = do_serialize_object(ar);					\
     ar.end_object();							\
     return r;								\
-  }									\
+  }                                                                     \
   template <bool W, template <bool> class Archive>			\
   bool do_serialize_object(Archive<W> &ar){
 

@@ -104,9 +104,9 @@ Tested on a Raspberry Pi 2 with a clean install of minimal Debian Jessie from ht
 * Install the latest version of boost (this may first require invoking `apt-get remove --purge libboost*` to remove a previous version if you're not using a clean install):
 ```
 	cd  
-	wget https://sourceforge.net/projects/boost/files/boost/1.62.0/boost_1_62_0.tar.bz2  
-	tar xvfo boost_1_62_0.tar.bz2  
-	cd boost_1_62_0  
+	wget https://sourceforge.net/projects/boost/files/boost/1.71.0/boost_1_71_0.tar.bz2  
+	tar xvfo boost_1_71_0.tar.bz2  
+	cd boost_1_71_0  
 	./bootstrap.sh  
 	sudo ./b2  
 ```
